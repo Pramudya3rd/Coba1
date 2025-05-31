@@ -1,32 +1,23 @@
-// src/components/Detail.jsx
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   FaStar,
-  FaTv,
-  FaWifi,
-  FaSnowflake,
-  FaThermometerHalf,
-  FaBath,
-  FaUserFriends,
-  FaRulerCombined,
   FaBed,
+  FaBath,
+  FaRulerCombined,
+  FaUserFriends,
 } from "react-icons/fa";
 
 const Detail = () => {
   const location = useLocation();
   const navigate = useNavigate();
-
-  // Read all dynamic data from location.state
   const {
-    name = "De Santika Nirwana",
-    address = "Ubud, Bali", // Changed from location to address
+    title = "De Santika Nirwana",
+    location: loc = "Ubud, Bali",
     price = 5000000,
-    image = "https://i.pinimg.com/73x/89/c1/df/89c1dfaf3e2bf035718cf2a76a16fd38.jpg",
-    description = "Villa eksklusif dengan fasilitas premium...",
-    guests = 6,
-    area = "24m²", // Changed from size to area
-    bedType = "One King Bed",
+    mainImage:
+      image = "https://i.pinimg.com/736x/89/c1/df/89c1dfaf3e2bf035718cf2a76a16fd38.jpg",
+    description = "Experience ultimate relaxation in a luxury villa surrounded by tropical scenery. Ideal for families, couples, or anyone looking for a peaceful getaway with complete amenities.",
     features = [
       "TV",
       "Free Wifi",
@@ -34,17 +25,20 @@ const Detail = () => {
       "Heater",
       "Private Bathroom",
     ],
-    roomImages = [
-      // Use actual roomImages if passed, otherwise fallback to hardcoded
-      "https://i.pinimg.com/73x/a8/bc/50/a8bc50298db283746524f3c82bbd9465.jpg",
-      "https://i.pinimg.com/73x/79/0b/56/790b56d61da6b4b2bd1301da3385b085.jpg",
-      "https://i.pinimg.com/73x/47/96/a1/4796a1d06f323c31fd2c7407c43788b9.jpg",
-    ],
+    guestCapacity: guests = 6,
+    size: area = "24m²",
+    bedType = "One King Bed",
   } = location.state || {};
+
+  const roomImages = [
+    "https://i.pinimg.com/736x/a8/bc/50/a8bc50298db283746524f3c82bbd9465.jpg",
+    "https://i.pinimg.com/736x/79/0b/56/790b56d61da6b4b2bd1301da3385b085.jpg",
+    "https://i.pinimg.com/736x/47/96/a1/4796a1d06f323c31fd2c7407c43788b9.jpg",
+  ];
 
   const handleBooking = () => {
     navigate("/booking", {
-      state: { name, price },
+      state: { title, price },
     });
   };
 
@@ -53,34 +47,24 @@ const Detail = () => {
       <div className="row g-5">
         {/* Main image and thumbnails */}
         <div className="col-md-6">
-          <img src={image} alt={name} className="img-fluid rounded-4 mb-3" />
+          <img src={image} alt={title} className="img-fluid rounded-4 mb-3" />
           <div className="row g-3">
-            {roomImages &&
-              roomImages.map(
-                (
-                  img,
-                  i // Ensure roomImages exists before mapping
-                ) => (
-                  <div className="col-4" key={i}>
-                    <img
-                      src={img}
-                      alt={`${name}-room-${i}`}
-                      className="img-fluid img-thumbnail rounded-4"
-                      style={{
-                        height: "80px",
-                        objectFit: "cover",
-                        width: "100%",
-                      }}
-                    />
-                  </div>
-                )
-              )}
+            {roomImages.map((img, i) => (
+              <div className="col-4" key={i}>
+                <img
+                  src={img}
+                  alt={`room-${i}`}
+                  className="img-fluid img-thumbnail rounded-4"
+                  style={{ height: "80px", objectFit: "cover", width: "100%" }}
+                />
+              </div>
+            ))}
           </div>
         </div>
 
         {/* Villa Detail Info */}
         <div className="col-md-6">
-          <h3 className="fw-bold">{name}</h3>
+          <h3 className="fw-bold">{title}</h3>
           <p className="mb-2">
             <span className="text-warning">
               {[...Array(5)].map((_, i) => (
@@ -99,40 +83,22 @@ const Detail = () => {
 
           <h6 className="fw-bold mt-4 mb-2">Room Features</h6>
           <div className="row row-cols-2 mb-3 text-muted">
-            {features &&
-              features.map(
-                (
-                  feature,
-                  i // Ensure features exists before mapping
-                ) => (
-                  <div className="col mb-2" key={i}>
-                    {/* Icons for features would need a mapping if needed from feature string */}
-                    {feature === "TV" && <FaTv className="me-2" />}
-                    {feature === "Free Wifi" && <FaWifi className="me-2" />}
-                    {feature === "Air Conditioner" && (
-                      <FaSnowflake className="me-2" />
-                    )}
-                    {feature === "Heater" && (
-                      <FaThermometerHalf className="me-2" />
-                    )}
-                    {feature === "Private Bathroom" && (
-                      <FaBath className="me-2" />
-                    )}
-                    {feature}
-                  </div>
-                )
-              )}
+            {features.map((feature, i) => (
+              <div className="col mb-2" key={i}>
+                {feature}
+              </div>
+            ))}
             <div className="col mb-2">
               <FaUserFriends className="me-2" />
-              Max Guests: {guests}
+              Max Guests: <strong>{guests}</strong>
             </div>
             <div className="col mb-2">
               <FaRulerCombined className="me-2" />
-              Area: {area} {/* Changed from Size to Area */}
+              Size: <strong>{area}</strong>
             </div>
             <div className="col mb-2">
               <FaBed className="me-2" />
-              Bed Type: {bedType}
+              Bed Type: <strong>{bedType}</strong>
             </div>
           </div>
 

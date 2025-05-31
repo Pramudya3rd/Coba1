@@ -1,4 +1,3 @@
-// src/pages/ViewVilla.jsx
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import ViewVillaHeader from "../components/ViewVilla/ViewHeader";
@@ -11,14 +10,16 @@ const ViewVilla = () => {
   const navigate = useNavigate();
 
   const {
-    id, // Added ID for navigation to edit
-    name = "De Santika Nirwana", // Changed from title
-    address = "Ubud, Bali", // Changed from location to address
+    id,
+    title = "De Santika Nirwana",
+    location: loc = "Ubud, Bali",
     price = 5000000,
-    image = "https://i.pinimg.com/73x/89/c1/df/89c1dfaf3e2bf035718cf2a76a16fd38.jpg",
+    image:
+      mainImage = "https://i.pinimg.com/736x/89/c1/df/89c1dfaf3e2bf035718cf2a76a16fd38.jpg",
+    images: additionalImages = [],
     description = "Villa eksklusif dengan fasilitas premium...",
-    guests = 6,
-    area = "24m²", // Changed from size to area
+    guests: guestCapacity = 6,
+    area: size = "24m²",
     bedType = "One King Bed",
     features = [
       "TV",
@@ -27,29 +28,26 @@ const ViewVilla = () => {
       "Heater",
       "Private Bathroom",
     ],
-    roomImages = [
-      // Use actual roomImages if passed, otherwise fallback to hardcoded
-      "https://i.pinimg.com/73x/a8/bc/50/a8bc50298db283746524f3c82bbd9465.jpg",
-      "https://i.pinimg.com/73x/79/0b/56/790b56d61da6b4b2bd1301da3385b085.jpg",
-      "https://i.pinimg.com/73x/47/96/a1/4796a1d06f323c31fd2c7407c43788b9.jpg",
-    ],
   } = location.state || {};
 
+  const roomImagesForThumbnails = mainImage
+    ? additionalImages
+    : additionalImages.slice(1);
+
   const handleEdit = () => {
-    navigate(`/edit-villa/${id}`, {
-      // Pass ID in URL, and full villa data in state
+    navigate("/edit-villa", {
       state: {
         id,
-        name, // Changed from title
-        address, // Changed from location to address
+        title,
+        location: loc,
         price,
-        image,
+        image: mainImage,
+        images: additionalImages,
         description,
-        guests,
-        area, // Changed from size to area
+        guests: guestCapacity,
+        area: size,
         bedType,
         features,
-        roomImages, // Pass all room images
       },
     });
   };
@@ -60,16 +58,19 @@ const ViewVilla = () => {
 
       <div className="container py-5">
         <div className="row g-5">
-          <VillaImages mainImage={image} name={name} roomImages={roomImages} />{" "}
-          {/* Changed title to name */}
+          <VillaImages
+            mainImage={mainImage}
+            title={title}
+            roomImages={roomImagesForThumbnails}
+          />
           <VillaDetails
-            name={name} // Changed title to name
-            address={address} // Changed location to address
+            title={title}
+            location={loc}
             price={price}
             description={description}
             features={features}
-            guests={guests}
-            area={area} // Changed size to area
+            guestCapacity={guestCapacity}
+            size={size}
             bedType={bedType}
             onEdit={handleEdit}
           />

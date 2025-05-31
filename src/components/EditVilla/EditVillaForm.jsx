@@ -1,252 +1,124 @@
-// src/components/EditVilla/EditVillaForm.jsx
-import React, { useState, useEffect } from "react";
-import EditImages from "./EditImages";
-import EditFeatures from "./EditFeatures";
+import React from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import {
+  FaStar,
+  FaBed,
+  FaBath,
+  FaRulerCombined,
+  FaUserFriends,
+} from "react-icons/fa";
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const Detail = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const {
+    title = "De Santika Nirwana",
+    location: loc = "Ubud, Bali",
+    price = 5000000,
+    mainImage:
+      image = "https://i.pinimg.com/736x/89/c1/df/89c1dfaf3e2bf035718cf2a76a16fd38.jpg",
+    description = "Experience ultimate relaxation in a luxury villa surrounded by tropical scenery. Ideal for families, couples, or anyone looking for a peaceful getaway with complete amenities.",
+    features = [
+      "TV",
+      "Free Wifi",
+      "Air Conditioner",
+      "Heater",
+      "Private Bathroom",
+    ],
+    guestCapacity: guests = 6,
+    size: area = "24m²",
+    bedType = "One King Bed",
+  } = location.state || {};
 
-const EditVillaForm = ({ villaData, onSuccess }) => {
-  const [formData, setFormData] = useState({
-    name: "", // Changed from villaName to name
-    address: "", // Changed from location to address
-    description: "",
-    guests: "", // Changed from capacity to guests
-    price: "",
-    area: "", // Changed from size to area
-    bedType: "",
-    mainImage: null, // This will hold the File object for a newly selected main image
-    additionalImages: [], // This will hold File objects for newly selected additional images
-  });
+  const roomImages = [
+    "https://i.pinimg.com/736x/a8/bc/50/a8bc50298db283746524f3c82bbd9465.jpg",
+    "https://i.pinimg.com/736x/79/0b/56/790b56d61da6b4b2bd1301da3385b085.jpg",
+    "https://i.pinimg.com/736x/47/96/a1/4796a1d06f323c31fd2c7407c43788b9.jpg",
+  ];
 
-  const [previewMainImage, setPreviewMainImage] = useState(null); // This will hold the URL for the main image preview
-  const [previewAdditionalImages, setPreviewAdditionalImages] = useState([]); // This will hold URLs for additional images preview
-  const [features, setFeatures] = useState([]);
-  const [newFeature, setNewFeature] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  // Cleanup preview URLs to prevent memory leaks
-  useEffect(() => {
-    return () => {
-      if (
-        previewMainImage &&
-        typeof previewMainImage === "string" &&
-        previewMainImage.startsWith("blob:")
-      ) {
-        URL.revokeObjectURL(previewMainImage);
-      }
-      previewAdditionalImages.forEach((url) => {
-        if (url.startsWith("blob:")) URL.revokeObjectURL(url);
-      });
-    };
-  }, [previewMainImage, previewAdditionalImages]);
-
-  useEffect(() => {
-    if (villaData) {
-      setFormData({
-        name: villaData.name || "", // Mapping from 'name'
-        address: villaData.address || "", // Changed from location to address
-        description: villaData.description || "",
-        guests: villaData.guests ? villaData.guests.toString() : "", // Mapping from 'guests'
-        price: villaData.price ? villaData.price.toString() : "",
-        area: villaData.area || "", // Changed from size to area
-        bedType: villaData.bedType || "",
-        mainImage: null, // Reset file input
-        additionalImages: [], // Reset file input, new files will be added
-      });
-
-      // Set initial previews from villaData
-      setPreviewMainImage(villaData.image || null);
-      setPreviewAdditionalImages(villaData.roomImages || []); // Assuming villaData.roomImages holds URLs for additional images
-      setFeatures(villaData.features || []);
-    }
-  }, [villaData]);
-
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-
-    if (name === "mainImage" && files.length > 0) {
-      const file = files[0];
-      setFormData((prev) => ({ ...prev, mainImage: file }));
-      setPreviewMainImage(URL.createObjectURL(file));
-    } else if (name === "additionalImages" && files.length > 0) {
-      const newFiles = Array.from(files);
-      setFormData((prev) => ({
-        ...prev,
-        additionalImages: [...prev.additionalImages, ...newFiles],
-      }));
-      const newPreviews = newFiles.map((file) => URL.createObjectURL(file));
-      setPreviewAdditionalImages((prev) => [...prev, ...newPreviews]);
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
-    }
-  };
-
-  const uploadImage = async (file) => {
-    const formDataImage = new FormData();
-    formDataImage.append("image", file);
-
-    const response = await fetch(`${BASE_URL}/api/upload`, {
-      method: "POST",
-      body: formDataImage,
+  const handleBooking = () => {
+    navigate("/booking", {
+      state: { title, price },
     });
-
-    if (!response.ok) throw new Error("Image upload failed");
-
-    const data = await response.json();
-    return data.url;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      let mainImageUrl = previewMainImage; // Keep existing image if no new one is selected
-      const additionalImageUrls = [...previewAdditionalImages]; // Keep existing additional images
-
-      if (formData.mainImage) {
-        // If a new main image file is selected
-        mainImageUrl = await uploadImage(formData.mainImage);
-      }
-
-      for (const file of formData.additionalImages) {
-        // Upload newly selected additional images
-        const url = await uploadImage(file);
-        additionalImageUrls.push(url);
-      }
-
-      const updatedData = {
-        name: formData.name,
-        address: formData.address, // Changed from location to address
-        description: formData.description,
-        guests: parseInt(formData.guests),
-        price: parseFloat(formData.price),
-        mainImage: mainImageUrl,
-        images: additionalImageUrls, // Send all image URLs (existing + new)
-        features: features,
-        area: formData.area, // Changed from size to area
-        bedType: formData.bedType,
-      };
-
-      //fetch
-      const res = await fetch(`${BASE_URL}/api/villas/${villaData.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedData),
-      });
-
-      if (!res.ok) throw new Error("Update villa failed");
-
-      alert("Villa updated successfully!");
-      if (onSuccess) onSuccess();
-    } catch (err) {
-      console.error("Update error:", err);
-      alert("Update error: " + err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const addFeature = () => {
-    const trimmed = newFeature.trim();
-    if (trimmed && !features.includes(trimmed)) {
-      setFeatures([...features, trimmed]);
-      setNewFeature("");
-    }
-  };
-
-  const removeFeature = (feature) => {
-    setFeatures(features.filter((f) => f !== feature));
   };
 
   return (
-    <form onSubmit={handleSubmit} className="add-villa-form">
-      <EditImages
-        previewMainImage={previewMainImage}
-        previewAdditionalImages={previewAdditionalImages}
-        handleChange={handleChange}
-      />
-
-      <div className="details-section">
-        <label>EDIT DETAILS</label>
-        <input
-          type="text"
-          name="name"
-          placeholder="Villa Name"
-          value={formData.name}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="text"
-          name="address" // Changed from location to address
-          placeholder="Address"
-          value={formData.address}
-          onChange={handleChange}
-          required
-        />
-        <textarea
-          name="description"
-          placeholder="Description"
-          value={formData.description}
-          onChange={handleChange}
-          required
-        />
-        <div className="inline-inputs">
-          <input
-            type="number"
-            name="guests"
-            placeholder="Capacity"
-            value={formData.guests}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="number"
-            name="price"
-            placeholder="Price per night"
-            value={formData.price}
-            onChange={handleChange}
-            required
-          />
+    <div className="container py-5">
+      <div className="row g-5">
+        {/* Main image and thumbnails */}
+        <div className="col-md-6">
+          <img src={image} alt={title} className="img-fluid rounded-4 mb-3" />
+          <div className="row g-3">
+            {roomImages.map((img, i) => (
+              <div className="col-4" key={i}>
+                <img
+                  src={img}
+                  alt={`room-${i}`}
+                  className="img-fluid img-thumbnail rounded-4"
+                  style={{ height: "80px", objectFit: "cover", width: "100%" }}
+                />
+              </div>
+            ))}
+          </div>
         </div>
-        <input
-          type="text"
-          name="area" // Changed from size to area
-          placeholder="Area (e.g., 24m²)" // Changed placeholder
-          value={formData.area}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="text"
-          name="bedType"
-          placeholder="Bed Type"
-          value={formData.bedType}
-          onChange={handleChange}
-          required
-        />
 
-        <EditFeatures
-          roomFeatures={features}
-          newFeature={newFeature}
-          setNewFeature={setNewFeature}
-          addFeature={addFeature}
-          removeFeature={removeFeature}
-        />
+        {/* Villa Detail Info */}
+        <div className="col-md-6">
+          <h3 className="fw-bold">{title}</h3>
+          <p className="mb-2">
+            <span className="text-warning">
+              {[...Array(5)].map((_, i) => (
+                <FaStar key={i} />
+              ))}
+            </span>
+            <span className="ms-2">
+              4.9 <span className="text-muted">(20 Reviews)</span>
+            </span>
+          </p>
+          <h5 className="fw-bold text-dark mb-3">
+            Rp. {price.toLocaleString("id-ID")}{" "}
+            <span className="fw-normal text-muted">/ night</span>
+          </h5>
+          <p className="text-muted">{description}</p>
 
-        <button
-          type="submit"
-          className="upload-btn full-width-btn"
-          disabled={loading}
-        >
-          {loading ? "Updating..." : "Update Villa"}
-        </button>
+          <h6 className="fw-bold mt-4 mb-2">Room Features</h6>
+          <div className="row row-cols-2 mb-3 text-muted">
+            {features.map((feature, i) => (
+              <div className="col mb-2" key={i}>
+                {feature}
+              </div>
+            ))}
+            <div className="col mb-2">
+              <FaUserFriends className="me-2" />
+              Max Guests: <strong>{guests}</strong>
+            </div>
+            <div className="col mb-2">
+              <FaRulerCombined className="me-2" />
+              Size: <strong>{area}</strong>
+            </div>
+            <div className="col mb-2">
+              <FaBed className="me-2" />
+              Bed Type: <strong>{bedType}</strong>
+            </div>
+          </div>
+
+          <h6 className="fw-bold mt-4 mb-2">Children and Extra Beds</h6>
+          <p className="text-muted mb-4">
+            Children are welcome to stay. Extra beds are available upon request
+            and may incur additional charges.
+          </p>
+
+          <button
+            className="btn rounded-pill text-white w-100 py-2"
+            style={{ backgroundColor: "#5a7684" }}
+            onClick={handleBooking}
+          >
+            Book Now
+          </button>
+        </div>
       </div>
-    </form>
+    </div>
   );
 };
 
-export default EditVillaForm;
+export default Detail;

@@ -1,28 +1,19 @@
-// src/components/ViewVilla/VillaImages.jsx
-import React from "react";
+import React from 'react';
 
-const VillaImages = (
-  { mainImage, name, roomImages } // Changed title to name
-) => (
+const VillaImages = ({ mainImage, title, roomImages }) => (
   <div className="col-md-6">
-    <img src={mainImage} alt={name} className="img-fluid rounded-4 mb-3" />
+    <img src={mainImage} alt={title} className="img-fluid rounded-4 mb-3" />
     <div className="row g-3">
-      {roomImages &&
-        roomImages.map(
-          (
-            img,
-            i // Ensure roomImages exists before mapping
-          ) => (
-            <div className="col-4" key={i}>
-              <img
-                src={img}
-                alt={`${name}-room-${i}`}
-                className="img-fluid img-thumbnail rounded-4"
-                style={{ height: "80px", objectFit: "cover", width: "100%" }}
-              />
-            </div>
-          )
-        )}
+      {roomImages.map((img, i) => (
+        <div className="col-4" key={i}>
+          <img
+            src={img}
+            alt={`room-${i}`}
+            className="img-fluid img-thumbnail rounded-4"
+            style={{ height: '80px', objectFit: 'cover', width: '100%' }}
+          />
+        </div>
+      ))}
     </div>
   </div>
 );

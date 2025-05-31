@@ -1,4 +1,3 @@
-// src/pages/Owner.jsx
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
@@ -11,8 +10,8 @@ const dummyBooking = [
     name: "Arya Manurung",
     email: "arya@gmail.com",
     phone: "085000444000",
-    address: "Jl Bumi, Jawa Tengah", // Changed from location to address
-    villaName: "Graha Amerta", // Changed from title to villaName for clarity in booking context
+    address: "Jl Bumi, Jawa Tengah",
+    title: "Graha Amerta",
     checkin: "30-05-2025",
     checkout: "01-06-2025",
     price: "Rp. 5.000.000",
@@ -22,8 +21,8 @@ const dummyBooking = [
     name: "Christifan Tius",
     email: "Tius@gmail.com",
     phone: "085222000111",
-    address: "Jl Bandung, Jawa Barat", // Changed from location to address
-    villaName: "De Santika Nirwana", // Changed from title
+    address: "Jl Bandung, Jawa Barat",
+    title: "De Santika Nirwana",
     checkin: "30-05-2025",
     checkout: "01-06-2025",
     price: "Rp. 5.000.000",
@@ -33,8 +32,8 @@ const dummyBooking = [
     name: "Bai Khaba",
     email: "Khaba@gmail.com",
     phone: "087555666999",
-    address: "Yogyakarta", // Changed from location to address
-    villaName: "Java de Villa", // Changed from title
+    address: "Yogyakarta",
+    title: "Java de Villa",
     checkin: "30-05-2025",
     checkout: "01-06-2025",
     price: "Rp. 5.000.000",
@@ -53,9 +52,11 @@ const Owner = () => {
   };
 
   const handleLogout = () => {
+    // Tambahkan logic logout (misal hapus token) di sini
     navigate("/login");
   };
 
+  // Close dropdown jika klik di luar icon dan dropdown
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (profileRef.current && !profileRef.current.contains(event.target)) {
@@ -88,7 +89,7 @@ const Owner = () => {
               <button
                 className="dropdown-item px-4 py-1 text-start"
                 onClick={handleLogout}
-                style={{ color: "inherit", fontWeight: "normal" }}
+                style={{ color: 'inherit', fontWeight: 'normal' }}
               >
                 Logout
               </button>
@@ -134,9 +135,8 @@ const Owner = () => {
                     <td>{booking.name}</td>
                     <td>{booking.email}</td>
                     <td>{booking.phone}</td>
-                    <td>{booking.address}</td>{" "}
-                    {/* Changed from location to address */}
-                    <td>{booking.villaName}</td> {/* Changed from title */}
+                    <td>{booking.address}</td>
+                    <td>{booking.title}</td>
                     <td>{booking.checkin}</td>
                     <td>{booking.checkout}</td>
                     <td>{booking.price}</td>

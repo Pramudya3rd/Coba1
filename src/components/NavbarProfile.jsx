@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { FaUserCircle } from "react-icons/fa";
-import logo from "../assets/logo-kamar-tamu.png";
+import React, { useState, useRef, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { FaUserCircle } from 'react-icons/fa';
+import logo from '../assets/logo-kamar-tamu.png';
 import "../styles/main.css";
 
 const Navbar = () => {
@@ -18,8 +18,8 @@ const Navbar = () => {
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const handleLogout = () => {
@@ -31,58 +31,49 @@ const Navbar = () => {
 
   return (
     <nav
-      className="navbar navbar-expand-lg navbar-primary-bg" // Menggunakan class CSS baru
+      className="navbar navbar-expand-lg"
       style={{
-        paddingTop: "1px",
-        paddingBottom: "1px",
-        minHeight: "40px",
+        backgroundColor: '#ADD8E6',
+        paddingTop: '1px',
+        paddingBottom: '1px',
+        minHeight: '40px',
       }}
     >
       <div
         className="container"
-        style={{ alignItems: "center", padding: 0, minHeight: "40px" }}
+        style={{ alignItems: 'center', padding: 0, minHeight: '40px' }}
       >
         <Link
           className="navbar-brand fw-bold"
           to="/"
           style={{ padding: 0, margin: 0 }}
         >
-          <img src={logo} alt="Logo" style={{ height: "75px" }} />
+          <img src={logo} alt="Logo" style={{ height: '75px' }} />
         </Link>
 
         <div className="collapse navbar-collapse justify-content-center">
           <ul
             className="navbar-nav mb-0 gap-5"
             style={{
-              alignItems: "center",
-              lineHeight: "1",
-              fontSize: "15px",
+              alignItems: 'center',
+              lineHeight: '1',
+              fontSize: '15px',
             }}
           >
             <li className="nav-item">
-              <Link className="nav-link fw-bold p-0" to="/">
-                HOME
-              </Link>
+              <Link className="nav-link fw-bold p-0" to="/">HOME</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link fw-bold p-0" to="/about">
-                ABOUT US
-              </Link>
+              <Link className="nav-link fw-bold p-0" to="/about">ABOUT US</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link fw-bold p-0" to="/our-villa">
-                OUR VILLA
-              </Link>
+              <Link className="nav-link fw-bold p-0" to="/our-villa">OUR VILLA</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link fw-bold p-0" to="/faq">
-                FAQ
-              </Link>
+              <Link className="nav-link fw-bold p-0" to="/faq">FAQ</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link fw-bold p-0" to="/contact">
-                CONTACT
-              </Link>
+              <Link className="nav-link fw-bold p-0" to="/contact">CONTACT</Link>
             </li>
           </ul>
         </div>

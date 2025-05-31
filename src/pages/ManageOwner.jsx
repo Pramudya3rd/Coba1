@@ -4,27 +4,27 @@ import "../styles/SideBar.css";
 
 const dummyOwner = [
   {
-    name: "Grand Barca Nirwana",
-    email: "Yogyakarta",
-    phone: "Arya Manurung",
-    villa: "The Sun Rise",
+    name: "Arya Manurung",
+    email: "arya@example.com",
+    phone: "085000444000",
+    villaName: "The Sun Rise",
   },
   {
-    name: "Grand Barca Nirwana",
-    email: "Yogyakarta",
-    phone: "Arya Manurung",
-    villa: "Jasmine The Ae",
+    name: "Christifan Tius",
+    email: "tius@example.com",
+    phone: "085222000111",
+    villaName: "Jasmine The Ae",
   },
   {
-    name: "Grand Barca Nirwana",
-    email: "Yogyakarta",
-    phone: "Arya Manurung",
-    villa: "Lime on Tea",
+    name: "Bai Khaba",
+    email: "khaba@example.com",
+    phone: "087555666999",
+    villaName: "Lime on Tea",
   },
 ];
 
 const ManageOwner = () => {
-  const [activeMenu, setActiveMenu] = useState("user");
+  const [activeMenu, setActiveMenu] = useState("owner");
 
   return (
     <div className="ManageOwner-wrapper">
@@ -32,13 +32,13 @@ const ManageOwner = () => {
 
       <div className="content-area">
         <div className="header">
-          <span>ManageOwner</span>
+          <span>Manage Owner</span>
           <span role="img" aria-label="profile">
             👤
           </span>
         </div>
 
-        {activeMenu === "user" && (
+        {activeMenu === "owner" && (
           <div className="user-table">
             <h4>OWNER</h4>
             <table>
@@ -51,19 +51,14 @@ const ManageOwner = () => {
                 </tr>
               </thead>
               <tbody>
-                {dummyOwner.map(
-                  (
-                    owner,
-                    index // Menggunakan 'owner' sebagai variabel iterasi
-                  ) => (
-                    <tr key={index}>
-                      <td>{owner.name}</td> {/* Diperbaiki dari user.name */}
-                      <td>{owner.email}</td> {/* Diperbaiki dari user.email */}
-                      <td>{owner.phone}</td> {/* Diperbaiki dari user.phone */}
-                      <td>{owner.villa}</td> {/* Diperbaiki dari user.villa */}
-                    </tr>
-                  )
-                )}
+                {dummyOwner.map((owner, index) => (
+                  <tr key={index}>
+                    <td>{owner.name}</td>
+                    <td>{owner.email}</td>
+                    <td>{owner.phone}</td>
+                    <td>{owner.villaName}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

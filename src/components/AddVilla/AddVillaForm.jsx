@@ -1,38 +1,26 @@
-// src/components/AddVilla/AddVillaForm.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 const AddVillaForm = () => {
   const [formData, setFormData] = useState({
-    name: "", // Changed from villaName
-    address: "", // Changed from location to address
+    name: "",
+    location: "",
     description: "",
-    guests: "", // Changed from capacity
+    guestCapacity: "",
     price: "",
-    area: "", // Changed from size to area
-    bedType: "", // Added
-    mainImage: null, // Changed from image
-    additionalImages: [], // Added for consistency, though not fully utilized in current AddVilla logic
+    size: "",
+    bedType: "",
+    mainImage: null,
+    additionalImages: [],
   });
 
-  const [previewMainImage, setPreviewMainImage] = useState(null); // Changed from previewImage
-  const [previewAdditionalImages, setPreviewAdditionalImages] = useState([]); // For storing Blob URLs
-  const [features, setFeatures] = useState([]); // Changed from roomFeatures
+  const [previewMainImage, setPreviewMainImage] = useState(null);
+  const [previewAdditionalImages, setPreviewAdditionalImages] = useState([]);
+  const [roomFeatures, setRoomFeatures] = useState([]);
   const [newFeature, setNewFeature] = useState("");
-
-  // Cleanup preview URLs to prevent memory leaks
-  useEffect(() => {
-    return () => {
-      if (previewMainImage) {
-        URL.revokeObjectURL(previewMainImage);
-      }
-      previewAdditionalImages.forEach((url) => URL.revokeObjectURL(url));
-    };
-  }, [previewMainImage, previewAdditionalImages]);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (name === "mainImage" && files.length > 0) {
-      // Changed name from 'image'
       const file = files[0];
       setFormData({ ...formData, mainImage: file });
       setPreviewMainImage(URL.createObjectURL(file));
@@ -54,28 +42,37 @@ const AddVillaForm = () => {
   };
 
   const addFeature = () => {
-    if (newFeature.trim() !== "" && !features.includes(newFeature.trim())) {
-      // Changed roomFeatures to features
-      setFeatures([...features, newFeature.trim()]); // Changed roomFeatures to features
+    if (newFeature.trim() !== "" && !roomFeatures.includes(newFeature.trim())) {
+      setRoomFeatures([...roomFeatures, newFeature.trim()]);
       setNewFeature("");
     }
   };
 
   const removeFeature = (feature) => {
-    setFeatures(features.filter((f) => f !== feature)); // Changed roomFeatures to features
+    setRoomFeatures(roomFeatures.filter((f) => f !== feature));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const completeData = {
-      ...formData,
-      features: features, // Changed roomFeatures to features
-      guests: parseInt(formData.guests), // Ensure number type
-      price: parseFloat(formData.price), // Ensure number type
+      name: formData.name,
+      location: formData.location,
+      description: formData.description,
+      guestCapacity: parseInt(formData.guestCapacity),
+      price: parseFloat(formData.price),
+      size: formData.size,
+      bedType: formData.bedType,
+      mainImage: formData.mainImage ? "placeholder_main_image_url" : null, // Replace with actual upload logic
+      additionalImages: formData.additionalImages.map(
+        () => "placeholder_additional_image_url"
+      ), // Replace with actual upload logic
+      features: roomFeatures,
     };
     console.log("Data to submit:", completeData);
     alert("Villa data uploaded!");
-    // Tambahkan request ke backend di sini
+    // In a real application, you would send completeData to your backend.
+    // For example, using fetch or axios. This would involve handling image uploads
+    // separately to get their URLs before sending the full villa data.
   };
 
   return (
@@ -115,7 +112,7 @@ const AddVillaForm = () => {
               id="additionalImages"
               onChange={handleChange}
               accept="image/*"
-              multiple // Allow multiple file selection
+              multiple
               className="form-control"
             />
             <div className="d-flex flex-wrap mt-2 gap-2">
@@ -157,9 +154,9 @@ const AddVillaForm = () => {
           />
           <input
             type="text"
-            name="address" // Changed from location to address
+            name="location"
             placeholder="Address"
-            value={formData.address}
+            value={formData.location}
             onChange={handleChange}
             required
           />
@@ -173,16 +170,16 @@ const AddVillaForm = () => {
           <div className="inline-inputs">
             <input
               type="number"
-              name="guests"
-              placeholder="Capacity"
-              value={formData.guests}
+              name="guestCapacity"
+              placeholder="Guest Capacity"
+              value={formData.guestCapacity}
               onChange={handleChange}
               required
             />
             <input
               type="number"
               name="price"
-              placeholder="Price"
+              placeholder="Price per night"
               value={formData.price}
               onChange={handleChange}
               required
@@ -190,9 +187,9 @@ const AddVillaForm = () => {
           </div>
           <input
             type="text"
-            name="area" // Changed from size to area
-            placeholder="Area (e.g., 24m²)" // Changed placeholder
-            value={formData.area}
+            name="size"
+            placeholder="Size (e.g., 24m²)"
+            value={formData.size}
             onChange={handleChange}
             required
           />
@@ -225,7 +222,7 @@ const AddVillaForm = () => {
           </div>
 
           <ul className="features-list">
-            {features.map((feature, index) => (
+            {roomFeatures.map((feature, index) => (
               <li key={index}>
                 {feature}
                 <button type="button" onClick={() => removeFeature(feature)}>

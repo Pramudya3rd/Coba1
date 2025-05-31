@@ -1,47 +1,16 @@
-// src/components/VillaCard.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/VillaCard.css";
 import { FaStar } from "react-icons/fa";
 
-// Add all relevant villa properties as props
-const VillaCard = ({
-  id,
-  name,
-  address, // Changed from location to address
-  price,
-  image,
-  description,
-  guests,
-  area, // Changed from size to area
-  bedType,
-  features,
-  roomImages,
-  onBookNow,
-}) => {
+const VillaCard = ({ title, location, price, image, onBookNow }) => {
   const navigate = useNavigate();
 
   const handleBookNow = () => {
     if (onBookNow) {
-      onBookNow(); // use the function passed from outside
+      onBookNow();
     } else {
-      // Default fallback if onBookNow is not provided.
-      // Pass all relevant villa details to the detail page.
-      navigate("/villa-detail", {
-        state: {
-          id, // Include ID if available
-          name,
-          address, // Changed from location to address
-          price: parseFloat(price.replace(/[Rp. /Night]/g, "").trim()), // Ensure price is a number
-          image,
-          description,
-          guests,
-          area, // Changed from size to area
-          bedType,
-          features,
-          roomImages,
-        },
-      });
+      navigate("/villa-detail", { state: { title, location, price, image } });
     }
   };
 
@@ -51,20 +20,24 @@ const VillaCard = ({
         <img
           src={image}
           className="card-img-top rounded-top-4 villa-image"
-          alt={name}
+          alt={title}
         />
         <div className="card-body d-flex flex-column">
-          <h5 className="card-title fw-semibold">{name}</h5>
-          <p className="text-muted mb-2">{address}</p>{" "}
-          {/* Changed from location to address */}
+          <h5 className="card-title fw-semibold">{title}</h5>
+          <p className="text-muted mb-2">{location}</p>
+
           <div className="mb-2">
             <span className="text-warning">
               <FaStar /> <FaStar /> <FaStar /> <FaStar /> <FaStar />
             </span>
             <small className="text-muted ms-2">4.9 (20 Reviews)</small>
           </div>
+
           <p className="mb-1 small text-muted">Start From</p>
-          <p className="fw-bold fs-6">{price}</p>
+          <p className="fw-bold fs-6">
+            Rp. {price.toLocaleString("id-ID")} / Night
+          </p>
+
           <button
             className="btn custom-btn rounded-pill mt-3 w-100"
             onClick={handleBookNow}

@@ -1,22 +1,16 @@
-// src/components/VillaBookingCard.jsx
-import React from "react";
-import "../styles/VillaBookingCard.css";
-import { useNavigate } from "react-router-dom";
+import React from 'react';
+import '../styles/VillaBookingCard.css';
+import { useNavigate } from 'react-router-dom';
 import {
-  FaStar,
-  FaBed,
-  FaBath,
-  FaRulerCombined,
-  FaSwimmer,
-  FaUserFriends,
-  FaLayerGroup,
-} from "react-icons/fa";
+  FaStar, FaBed, FaBath, FaRulerCombined,
+  FaSwimmer, FaUserFriends, FaLayerGroup
+} from 'react-icons/fa';
 
 const VillaBookingCard = () => {
   const navigate = useNavigate();
 
   const handleBooking = () => {
-    navigate("/payment");
+    navigate('/payment');
   };
 
   return (
@@ -24,14 +18,13 @@ const VillaBookingCard = () => {
       {/* Villa Card */}
       <div className="villa-card">
         <img
-          src="https://i.pinimg.com/73x/89/c1/df/89c1dfaf3e2bf035718cf2a76a16fd38.jpg"
+          src="https://i.pinimg.com/736x/89/c1/df/89c1dfaf3e2bf035718cf2a76a16fd38.jpg"
           alt="Villa"
           className="villa-image"
         />
         <div className="villa-content">
           <p className="villa-tagline">THE CHOICE OF FAMILIES</p>
-          <h5 className="villa-title">De Santika Nirwana</h5>{" "}
-          {/* This remains 'villa-title' for display purposes */}
+          <h5 className="villa-title">De Santika Nirwana</h5>
           <div className="villa-rating">
             <span className="text-warning">
               <FaStar /> <FaStar /> <FaStar /> <FaStar /> <FaStar />
@@ -40,25 +33,12 @@ const VillaBookingCard = () => {
           </div>
           <hr />
           <div className="villa-features">
-            <div>
-              <FaBed /> Beds <strong>4</strong>
-            </div>
-            <div>
-              <FaBath /> Bathrooms <strong>2</strong>
-            </div>
-            <div>
-              <FaRulerCombined /> Area <strong>24m²</strong>{" "}
-              {/* Pastikan ini mengacu pada 'area' */}
-            </div>
-            <div>
-              <FaSwimmer /> Swimming Pool <strong>1</strong>
-            </div>
-            <div>
-              <FaUserFriends /> Guest <strong>6</strong>
-            </div>
-            <div>
-              <FaLayerGroup /> Floor <strong>2</strong>
-            </div>
+            <div><FaBed /> Beds <strong>4</strong></div>
+            <div><FaBath /> Bathrooms <strong>2</strong></div>
+            <div><FaRulerCombined /> Area <strong>24m²</strong></div>
+            <div><FaSwimmer /> Swimming Pool <strong>1</strong></div>
+            <div><FaUserFriends /> Guest <strong>6</strong></div>
+            <div><FaLayerGroup /> Floor <strong>2</strong></div>
           </div>
         </div>
       </div>

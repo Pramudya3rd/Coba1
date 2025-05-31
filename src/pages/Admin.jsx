@@ -1,4 +1,3 @@
-// src/pages/Admin.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/SidebarAdmin";
@@ -28,108 +27,64 @@ const dummyUsers = [
 
 const dummyOwners = [
   {
-    name: "Grand Barca Nirwana",
-    email: "Yogyakarta",
-    phone: "Arya Manurung",
-    villa: "The Sun Rise",
+    name: "Arya Manurung",
+    email: "arya@example.com",
+    phone: "081234567890",
+    villaName: "The Sun Rise",
   },
   {
-    name: "Grand Barca Nirwana",
-    email: "Yogyakarta",
-    phone: "Arya Manurung",
-    villa: "Jasmine The Ae",
+    name: "Christifan Tius",
+    email: "tius@example.com",
+    phone: "081234567891",
+    villaName: "Jasmine The Ae",
   },
   {
-    name: "Grand Barca Nirwana",
-    email: "Yogyakarta",
-    phone: "Arya Manurung",
-    villa: "Lime on Tea",
+    name: "Bai Khaba",
+    email: "khaba@example.com",
+    phone: "087555666999",
+    villaName: "Lime on Tea",
   },
 ];
 
-const dummyVillasForAdmin = [
-  // Renamed to avoid conflict and clearly define purpose
+const dummyVillas = [
   {
-    id: 1,
     name: "Grand Barca Nirwana",
-    address: "Yogyakarta", // Changed from location to address
+    address: "Yogyakarta",
     owner: "Arya Manurung",
-    status: "Pending",
   },
   {
-    id: 2,
-    name: "De Santika Nirwana",
-    address: "Ubud, Bali", // Changed from location to address
-    owner: "Budi Santoso",
-    status: "Verified",
+    name: "Grand Barca Nirwana",
+    address: "Yogyakarta",
+    owner: "Arya Manurung",
   },
   {
-    id: 3,
-    name: "Samudra Biru Tropika",
-    address: "Canggu, Bali", // Changed from location to address
-    owner: "Citra Dewi",
-    status: "Rejected",
+    name: "Grand Barca Nirwana",
+    address: "Yogyakarta",
+    owner: "Arya Manurung",
   },
 ];
 
-const villasListForDisplay = [
-  // Data for "LIST VILLA"
+const villas = [
   {
-    id: 1,
-    name: "De Santika Nirwana", // Changed from title
-    address: "Ubud, Bali", // Changed from location to address
-    price: "Rp. 5.000.000/Night",
+    title: "De Santika Nirwana",
+    location: "Ubud, Bali",
+    price: 5000000,
     image:
-      "https://i.pinimg.com/73x/89/c1/df/89c1dfaf3e2bf035718cf2a76a16fd38.jpg",
-    description: "Villa eksklusif dengan fasilitas premium...",
-    guests: 6,
-    area: "24m²",
-    bedType: "One King Bed",
-    features: [
-      "TV",
-      "Free Wifi",
-      "Air Conditioner",
-      "Heater",
-      "Private Bathroom",
-    ],
-    roomImages: [
-      "https://i.pinimg.com/73x/a8/bc/50/a8bc50298db283746524f3c82bbd9465.jpg",
-      "https://i.pinimg.com/73x/79/0b/56/790b56d61da6b4b2bd1301da3385b085.jpg",
-      "https://i.pinimg.com/73x/47/96/a1/4796a1d06f323c31fd2c7407c43788b9.jpg",
-    ],
+      "https://i.pinimg.com/736x/89/c1/df/89c1dfaf3e2bf035718cf2a76a16fd38.jpg",
   },
   {
-    id: 2,
-    name: "Grand Lavanya Hills", // Changed from title
-    address: "Ubud, Bali", // Changed from location to address
-    price: "Rp. 8.500.000/Night",
+    title: "Grand Lavanya Hills",
+    location: "Ubud, Bali",
+    price: 8500000,
     image:
-      "https://i.pinimg.com/73x/b3/1d/ac/b31dac2e3bf41b30d84f5e454e293b13.jpg",
-    description: "Villa mewah dengan pemandangan bukit yang menakjubkan.",
-    guests: 8,
-    area: "30m²",
-    bedType: "Two King Beds",
-    features: ["TV", "Free Wifi", "Private Pool", "Kitchen"],
-    roomImages: [
-      "https://i.pinimg.com/73x/a8/bc/50/a8bc50298db283746524f3c82bbd9465.jpg",
-      "https://i.pinimg.com/73x/79/0b/56/790b56d61da6b4b2bd1301da3385b085.jpg",
-    ],
+      "https://i.pinimg.com/736x/b3/1d/ac/b31dac2e3bf41b30d84f5e454e293b13.jpg",
   },
   {
-    id: 3,
-    name: "Samudra Biru Tropika", // Changed from title
-    address: "Ubud, Bali", // Changed from location to address
-    price: "Rp. 4.500.000/Night",
+    title: "Samudra Biru Tropika",
+    location: "Ubud, Bali",
+    price: 4500000,
     image:
-      "http://i.pinimg.com/73x/28/a8/8d/28a88d79127329f7f6cb7be2a18ad2f0.jpg",
-    description: "Nikmati ketenangan di villa dekat pantai.",
-    guests: 4,
-    area: "20m²",
-    bedType: "One Queen Bed",
-    features: ["TV", "Free Wifi"],
-    roomImages: [
-      "https://i.pinimg.com/73x/47/96/a1/4796a1d06f323c31fd2c7407c43788b9.jpg",
-    ],
+      "http://i.pinimg.com/736x/28/a8/8d/28a88d79127329f7f6cb7be2a18ad2f0.jpg",
   },
 ];
 
@@ -138,8 +93,8 @@ const dummyBooking = [
     name: "Grand Barca Nirwana",
     email: "Yogyakarta",
     phone: "Arya Manurung",
-    address: "Jl Bandung, Jawa Barat", // Changed from location to address
-    villaName: "De Santika Nirwana",
+    address: "Jl Bandung, Jawa Barat",
+    title: "De Santika Nirwana",
     checkin: "30-05-2025",
     checkout: "01-06-2025",
     price: "Rp. 5.000.000",
@@ -149,8 +104,8 @@ const dummyBooking = [
     name: "Grand Barca Nirwana",
     email: "Yogyakarta",
     phone: "Arya Manurung",
-    address: "Jl Bandung, Jawa Barat", // Changed from location to address
-    villaName: "De Santika Nirwana",
+    address: "Jl Bandung, Jawa Barat",
+    title: "De Santika Nirwana",
     checkin: "30-05-2025",
     checkout: "01-06-2025",
     price: "Rp. 5.000.000",
@@ -160,8 +115,8 @@ const dummyBooking = [
     name: "Grand Barca Nirwana",
     email: "Yogyakarta",
     phone: "Arya Manurung",
-    address: "Jl Bandung, Jawa Barat", // Changed from location to address
-    villaName: "De Santika Nirwana",
+    address: "Jl Bandung, Jawa Barat",
+    title: "De Santika Nirwana",
     checkin: "30-05-2025",
     checkout: "01-06-2025",
     price: "Rp. 5.000.000",
@@ -227,7 +182,7 @@ const Admin = () => {
                   <th>Name</th>
                   <th>Email</th>
                   <th>Phone</th>
-                  <th>Villa</th>
+                  <th>Villa Name</th>
                 </tr>
               </thead>
               <tbody>
@@ -236,7 +191,7 @@ const Admin = () => {
                     <td>{owner.name}</td>
                     <td>{owner.email}</td>
                     <td>{owner.phone}</td>
-                    <td>{owner.villa}</td>
+                    <td>{owner.villaName}</td>
                   </tr>
                 ))}
               </tbody>
@@ -251,18 +206,16 @@ const Admin = () => {
               <thead>
                 <tr>
                   <th>Villa Name</th>
-                  <th>Address</th>{" "}
-                  {/* Display as Address for table, but data is 'address' */}
+                  <th>Address</th>
                   <th>Owner</th>
                   <th>Action</th>
                 </tr>
               </thead>
               <tbody>
-                {dummyVillasForAdmin.map((villa, index) => (
+                {dummyVillas.map((villa, index) => (
                   <tr key={index}>
                     <td>{villa.name}</td>
-                    <td>{villa.address}</td>{" "}
-                    {/* Changed from location to address */}
+                    <td>{villa.address}</td>
                     <td>{villa.owner}</td>
                     <td>
                       <button
@@ -289,11 +242,16 @@ const Admin = () => {
           <div className="villa-list-section">
             <h4>LIST VILLA</h4>
             <div className="row g-4 justify-content-center">
-              {villasListForDisplay.map((villa, index) => (
+              {villas.map((villa, index) => (
                 <VillaCard
                   key={index}
-                  {...villa} // Pass all properties
-                  onBookNow={() => navigate("/villa-detail", { state: villa })} // Pass the entire villa object
+                  title={villa.title}
+                  location={villa.location}
+                  price={villa.price}
+                  image={villa.image}
+                  onBookNow={() =>
+                    navigate("/villa-detail", { state: { ...villa } })
+                  }
                 />
               ))}
             </div>
@@ -323,9 +281,8 @@ const Admin = () => {
                     <td>{booking.name}</td>
                     <td>{booking.email}</td>
                     <td>{booking.phone}</td>
-                    <td>{booking.address}</td>{" "}
-                    {/* Changed from location to address */}
-                    <td>{booking.villaName}</td> {/* Changed from title */}
+                    <td>{booking.address}</td>
+                    <td>{booking.title}</td>
                     <td>{booking.checkin}</td>
                     <td>{booking.checkout}</td>
                     <td>{booking.price}</td>

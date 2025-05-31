@@ -1,4 +1,3 @@
-// src/components/MyVilla/MyVillaRow.jsx
 import React from "react";
 import { FaRegEye, FaEdit, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -9,19 +8,19 @@ const MyVillaRow = ({ villa }) => {
   return (
     <tr className="villa-row">
       <td>{villa.name}</td>
-      <td>{villa.address}</td> {/* Changed from location to address */}
+      <td>{villa.address}</td>
       <td>{villa.status}</td>
       <td className="action-buttons">
         <button
           title="View"
-          onClick={() => navigate(`/view-villa`, { state: villa })} // Pass the entire villa object
+          onClick={() => navigate(`/view-villa`, { state: { ...villa } })}
         >
           <FaRegEye />
         </button>
 
         <button
           title="Edit"
-          onClick={() => navigate(`/edit-villa/${villa.id}`, { state: villa })} // Pass ID and the entire villa object
+          onClick={() => navigate(`/edit-villa`, { state: { ...villa } })}
         >
           <FaEdit />
         </button>
