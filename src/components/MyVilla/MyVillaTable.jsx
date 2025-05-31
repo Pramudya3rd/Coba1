@@ -6,7 +6,7 @@ const villas = [
   {
     id: 1,
     name: "Grand Barca Nirwana",
-    location: "Yogyakarta", // Changed from address
+    address: "Yogyakarta", // Changed from location to address
     status: "Verified",
     price: 7500000, // Added price for consistent passing
     image:
@@ -24,7 +24,7 @@ const villas = [
   {
     id: 2,
     name: "Grand Barca Nirwana",
-    location: "Yogyakarta", // Changed from address
+    address: "Yogyakarta", // Changed from location to address
     status: "Pending",
     price: 5000000,
     image:
@@ -39,7 +39,7 @@ const villas = [
   {
     id: 3,
     name: "Grand Barca Nirwana",
-    location: "Yogyakarta", // Changed from address
+    address: "Yogyakarta", // Changed from location to address
     status: "Rejected",
     price: 4000000,
     image:

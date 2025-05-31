@@ -20,12 +20,12 @@ const Detail = () => {
   // Read all dynamic data from location.state
   const {
     name = "De Santika Nirwana",
-    location: loc = "Ubud, Bali",
+    address = "Ubud, Bali", // Changed from location to address
     price = 5000000,
     image = "https://i.pinimg.com/73x/89/c1/df/89c1dfaf3e2bf035718cf2a76a16fd38.jpg",
     description = "Villa eksklusif dengan fasilitas premium...",
     guests = 6,
-    size = "24m²", // Changed from area to size
+    area = "24m²", // Changed from size to area
     bedType = "One King Bed",
     features = [
       "TV",
@@ -103,7 +103,7 @@ const Detail = () => {
               features.map(
                 (
                   feature,
-                  i // Ensure features exist before mapping
+                  i // Ensure features exists before mapping
                 ) => (
                   <div className="col mb-2" key={i}>
                     {/* Icons for features would need a mapping if needed from feature string */}
@@ -128,7 +128,7 @@ const Detail = () => {
             </div>
             <div className="col mb-2">
               <FaRulerCombined className="me-2" />
-              Size: {size}
+              Area: {area} {/* Changed from Size to Area */}
             </div>
             <div className="col mb-2">
               <FaBed className="me-2" />

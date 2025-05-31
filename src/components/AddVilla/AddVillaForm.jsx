@@ -4,11 +4,11 @@ import React, { useState, useEffect } from "react";
 const AddVillaForm = () => {
   const [formData, setFormData] = useState({
     name: "", // Changed from villaName
-    location: "", // Changed from address
+    address: "", // Changed from location to address
     description: "",
     guests: "", // Changed from capacity
     price: "",
-    size: "", // Added
+    area: "", // Changed from size to area
     bedType: "", // Added
     mainImage: null, // Changed from image
     additionalImages: [], // Added for consistency, though not fully utilized in current AddVilla logic
@@ -157,9 +157,9 @@ const AddVillaForm = () => {
           />
           <input
             type="text"
-            name="location"
+            name="address" // Changed from location to address
             placeholder="Address"
-            value={formData.location}
+            value={formData.address}
             onChange={handleChange}
             required
           />
@@ -190,9 +190,9 @@ const AddVillaForm = () => {
           </div>
           <input
             type="text"
-            name="size"
-            placeholder="Size (e.g., 24m²)"
-            value={formData.size}
+            name="area" // Changed from size to area
+            placeholder="Area (e.g., 24m²)" // Changed placeholder
+            value={formData.area}
             onChange={handleChange}
             required
           />

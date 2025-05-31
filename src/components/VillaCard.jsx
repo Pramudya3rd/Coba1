@@ -8,12 +8,12 @@ import { FaStar } from "react-icons/fa";
 const VillaCard = ({
   id,
   name,
-  location,
+  address, // Changed from location to address
   price,
   image,
   description,
   guests,
-  size,
+  area, // Changed from size to area
   bedType,
   features,
   roomImages,
@@ -31,12 +31,12 @@ const VillaCard = ({
         state: {
           id, // Include ID if available
           name,
-          location,
+          address, // Changed from location to address
           price: parseFloat(price.replace(/[Rp. /Night]/g, "").trim()), // Ensure price is a number
           image,
           description,
           guests,
-          size,
+          area, // Changed from size to area
           bedType,
           features,
           roomImages,
@@ -55,18 +55,16 @@ const VillaCard = ({
         />
         <div className="card-body d-flex flex-column">
           <h5 className="card-title fw-semibold">{name}</h5>
-          <p className="text-muted mb-2">{location}</p>
-
+          <p className="text-muted mb-2">{address}</p>{" "}
+          {/* Changed from location to address */}
           <div className="mb-2">
             <span className="text-warning">
               <FaStar /> <FaStar /> <FaStar /> <FaStar /> <FaStar />
             </span>
             <small className="text-muted ms-2">4.9 (20 Reviews)</small>
           </div>
-
           <p className="mb-1 small text-muted">Start From</p>
           <p className="fw-bold fs-6">{price}</p>
-
           <button
             className="btn custom-btn rounded-pill mt-3 w-100"
             onClick={handleBookNow}

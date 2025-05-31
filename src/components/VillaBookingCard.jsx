@@ -47,7 +47,8 @@ const VillaBookingCard = () => {
               <FaBath /> Bathrooms <strong>2</strong>
             </div>
             <div>
-              <FaRulerCombined /> Area <strong>24m²</strong>
+              <FaRulerCombined /> Area <strong>24m²</strong>{" "}
+              {/* Pastikan ini mengacu pada 'area' */}
             </div>
             <div>
               <FaSwimmer /> Swimming Pool <strong>1</strong>

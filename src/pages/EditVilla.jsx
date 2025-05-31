@@ -17,7 +17,7 @@ const EditVilla = () => {
         {
           id: 1,
           name: "Grand Barca Nirwana", // Changed from title
-          location: "Yogyakarta",
+          address: "Yogyakarta", // Changed from location to address
           price: 7500000,
           image:
             "https://i.pinimg.com/73x/89/c1/df/89c1dfaf3e2bf035718cf2a76a16fd38.jpg",
@@ -36,7 +36,7 @@ const EditVilla = () => {
         {
           id: 2,
           name: "De Santika Nirwana", // Changed from title
-          location: "Ubud, Bali",
+          address: "Ubud, Bali", // Changed from location to address
           price: 5000000,
           image:
             "https://i.pinimg.com/73x/89/c1/df/89c1dfaf3e2bf035718cf2a76a16fd38.jpg",
@@ -60,7 +60,7 @@ const EditVilla = () => {
         {
           id: 3,
           name: "Samudra Biru Tropika", // Changed from title
-          location: "Ubud, Bali",
+          address: "Ubud, Bali", // Changed from location to address
           price: 4500000,
           image:
             "http://i.pinimg.com/73x/28/a8/8d/28a88d79127329f7f6cb7be2a18ad2f0.jpg",

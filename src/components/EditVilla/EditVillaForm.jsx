@@ -8,11 +8,11 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const EditVillaForm = ({ villaData, onSuccess }) => {
   const [formData, setFormData] = useState({
     name: "", // Changed from villaName to name
-    location: "", // Changed from address to location
+    address: "", // Changed from location to address
     description: "",
     guests: "", // Changed from capacity to guests
     price: "",
-    size: "",
+    area: "", // Changed from size to area
     bedType: "",
     mainImage: null, // This will hold the File object for a newly selected main image
     additionalImages: [], // This will hold File objects for newly selected additional images
@@ -44,11 +44,11 @@ const EditVillaForm = ({ villaData, onSuccess }) => {
     if (villaData) {
       setFormData({
         name: villaData.name || "", // Mapping from 'name'
-        location: villaData.location || "", // Already consistent
+        address: villaData.address || "", // Changed from location to address
         description: villaData.description || "",
         guests: villaData.guests ? villaData.guests.toString() : "", // Mapping from 'guests'
         price: villaData.price ? villaData.price.toString() : "",
-        size: villaData.area || "", // Mapping from 'area' to 'size'
+        area: villaData.area || "", // Changed from size to area
         bedType: villaData.bedType || "",
         mainImage: null, // Reset file input
         additionalImages: [], // Reset file input, new files will be added
@@ -117,14 +117,14 @@ const EditVillaForm = ({ villaData, onSuccess }) => {
 
       const updatedData = {
         name: formData.name,
-        location: formData.location,
+        address: formData.address, // Changed from location to address
         description: formData.description,
         guests: parseInt(formData.guests),
         price: parseFloat(formData.price),
         mainImage: mainImageUrl,
         images: additionalImageUrls, // Send all image URLs (existing + new)
         features: features,
-        area: formData.size, // Sending as 'area' as per backend expectation based on previous EditVilla analysis
+        area: formData.area, // Changed from size to area
         bedType: formData.bedType,
       };
 
@@ -181,9 +181,9 @@ const EditVillaForm = ({ villaData, onSuccess }) => {
         />
         <input
           type="text"
-          name="location"
+          name="address" // Changed from location to address
           placeholder="Address"
-          value={formData.location}
+          value={formData.address}
           onChange={handleChange}
           required
         />
@@ -214,9 +214,9 @@ const EditVillaForm = ({ villaData, onSuccess }) => {
         </div>
         <input
           type="text"
-          name="size"
-          placeholder="Size (e.g., 24m²)"
-          value={formData.size}
+          name="area" // Changed from size to area
+          placeholder="Area (e.g., 24m²)" // Changed placeholder
+          value={formData.area}
           onChange={handleChange}
           required
         />

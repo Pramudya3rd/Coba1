@@ -13,12 +13,12 @@ const ViewVilla = () => {
   const {
     id, // Added ID for navigation to edit
     name = "De Santika Nirwana", // Changed from title
-    location: loc = "Ubud, Bali",
+    address = "Ubud, Bali", // Changed from location to address
     price = 5000000,
     image = "https://i.pinimg.com/73x/89/c1/df/89c1dfaf3e2bf035718cf2a76a16fd38.jpg",
     description = "Villa eksklusif dengan fasilitas premium...",
     guests = 6,
-    size = "24m²", // Changed from area to size
+    area = "24m²", // Changed from size to area
     bedType = "One King Bed",
     features = [
       "TV",
@@ -41,12 +41,12 @@ const ViewVilla = () => {
       state: {
         id,
         name, // Changed from title
-        location: loc,
+        address, // Changed from location to address
         price,
         image,
         description,
         guests,
-        area: size, // For EditVillaForm to map correctly
+        area, // Changed from size to area
         bedType,
         features,
         roomImages, // Pass all room images
@@ -64,12 +64,12 @@ const ViewVilla = () => {
           {/* Changed title to name */}
           <VillaDetails
             name={name} // Changed title to name
-            location={loc}
+            address={address} // Changed location to address
             price={price}
             description={description}
             features={features}
             guests={guests}
-            size={size} // Changed area to size
+            area={area} // Changed size to area
             bedType={bedType}
             onEdit={handleEdit}
           />

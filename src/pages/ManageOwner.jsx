@@ -33,7 +33,9 @@ const ManageOwner = () => {
       <div className="content-area">
         <div className="header">
           <span>ManageOwner</span>
-          <span role="img" aria-label="profile">👤</span>
+          <span role="img" aria-label="profile">
+            👤
+          </span>
         </div>
 
         {activeMenu === "user" && (
@@ -49,14 +51,19 @@ const ManageOwner = () => {
                 </tr>
               </thead>
               <tbody>
-                {dummyOwner.map((owner, index) => (
-                  <tr key={index}>
-                    <td>{user.name}</td>
-                    <td>{user.email}</td>
-                    <td>{user.phone}</td>
-                    <td>{user.villa}</td>
-                  </tr>
-                ))}
+                {dummyOwner.map(
+                  (
+                    owner,
+                    index // Menggunakan 'owner' sebagai variabel iterasi
+                  ) => (
+                    <tr key={index}>
+                      <td>{owner.name}</td> {/* Diperbaiki dari user.name */}
+                      <td>{owner.email}</td> {/* Diperbaiki dari user.email */}
+                      <td>{owner.phone}</td> {/* Diperbaiki dari user.phone */}
+                      <td>{owner.villa}</td> {/* Diperbaiki dari user.villa */}
+                    </tr>
+                  )
+                )}
               </tbody>
             </table>
           </div>

@@ -9,7 +9,7 @@ const MyVillaRow = ({ villa }) => {
   return (
     <tr className="villa-row">
       <td>{villa.name}</td>
-      <td>{villa.location}</td> {/* Changed from address */}
+      <td>{villa.address}</td> {/* Changed from location to address */}
       <td>{villa.status}</td>
       <td className="action-buttons">
         <button

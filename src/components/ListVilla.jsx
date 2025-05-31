@@ -11,13 +11,13 @@ const ListVilla = () => {
     {
       id: 1, // Added ID
       name: "De Santika Nirwana", // Changed from title
-      location: "Ubud, Bali",
+      address: "Ubud, Bali", // Changed from location to address
       price: "Rp. 5.000.000/Night",
       image:
         "https://i.pinimg.com/73x/89/c1/df/89c1dfaf3e2bf035718cf2a76a16fd38.jpg",
       description: "Villa eksklusif dengan fasilitas premium...",
       guests: 6,
-      size: "24m²",
+      area: "24m²", // Changed from size to area
       bedType: "One King Bed",
       features: [
         "TV",
@@ -35,13 +35,13 @@ const ListVilla = () => {
     {
       id: 2, // Added ID
       name: "Grand Lavanya Hills", // Changed from title
-      location: "Ubud, Bali",
+      address: "Ubud, Bali", // Changed from location to address
       price: "Rp. 8.500.000/Night",
       image:
         "https://i.pinimg.com/73x/b3/1d/ac/b31dac2e3bf41b30d84f5e454e293b13.jpg",
       description: "Villa mewah dengan pemandangan bukit yang menakjubkan.",
       guests: 8,
-      size: "30m²",
+      area: "30m²", // Changed from size to area
       bedType: "Two King Beds",
       features: ["TV", "Free Wifi", "Private Pool", "Kitchen"],
       roomImages: [
@@ -52,13 +52,13 @@ const ListVilla = () => {
     {
       id: 3, // Added ID
       name: "Samudra Biru Tropika", // Changed from title
-      location: "Ubud, Bali",
+      address: "Ubud, Bali", // Changed from location to address
       price: "Rp. 4.500.000/Night",
       image:
         "http://i.pinimg.com/73x/28/a8/8d/28a88d79127329f7f6cb7be2a18ad2f0.jpg",
       description: "Nikmati ketenangan di villa dekat pantai.",
       guests: 4,
-      size: "20m²",
+      area: "20m²", // Changed from size to area
       bedType: "One Queen Bed",
       features: ["TV", "Free Wifi"],
       roomImages: [

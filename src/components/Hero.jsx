@@ -1,16 +1,18 @@
-import React from 'react';
-import heroImg from '../assets/hero.png'; // pastikan path ini sesuai struktur foldermu
+import React from "react";
+import heroImg from "../assets/hero.png"; // pastikan path ini sesuai struktur foldermu
 
 const Hero = () => (
   <section className="hero">
-    <img
-      src={heroImg}
-      alt="Hero"
-    />
+    <img src={heroImg} alt="Hero" />
     <div className="filter-buttons">
-      {['Location', 'Price', 'Rating'].map((btn, idx) => (
-        <button key={idx}>{btn}</button>
-      ))}
+      {["Address", "Price", "Rating"].map(
+        (
+          btn,
+          idx // Changed 'Location' to 'Address'
+        ) => (
+          <button key={idx}>{btn}</button>
+        )
+      )}
     </div>
     <div className="hero-text">
       <p>Welcome to Company</p>

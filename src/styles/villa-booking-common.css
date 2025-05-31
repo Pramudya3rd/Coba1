@@ -1,0 +1,143 @@
+/* src/styles/villa-booking-common.css */
+.villa-booking-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  padding: 40px;
+  flex-wrap: wrap;
+}
+
+.villa-card,
+.reservation-summary {
+  width: 450px;
+  background-color: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.villa-image {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 16px;
+}
+
+.villa-tagline {
+  font-size: 0.9rem;
+  color: #888;
+}
+
+.villa-title {
+  font-size: 1.4rem;
+  margin: 8px 0;
+}
+
+.villa-rating {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #ffc107;
+}
+
+.villa-features {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.summary-title {
+  font-size: 1.3rem;
+  margin-bottom: 20px;
+}
+
+.summary-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+}
+
+.upload-section {
+  margin-bottom: 20px;
+}
+
+.upload-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background-color: #e9ecef;
+  border-radius: 8px;
+}
+
+.file-input {
+  border: none;
+  background: transparent;
+}
+
+.upload-section {
+  margin-bottom: 20px;
+}
+
+.upload-box {
+  display: flex;
+  flex-direction: column; /* Mengubah menjadi kolom agar ikon dan teks berada di atas-bawah */
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 30px 20px; /* Tingkatkan padding vertikal */
+  background-color: #e9ecef;
+  border: 2px dashed #a0b7c7;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  min-height: 120px; /* Beri tinggi minimum agar lebih terlihat */
+  position: relative; /* Penting untuk posisi input file */
+  overflow: hidden; /* Penting untuk menyembunyikan input file asli */
+}
+
+.upload-box:hover {
+  background-color: #dbe7f0;
+  border-color: #537c91;
+}
+
+.upload-box .upload-icon {
+  font-size: 3em; /* Ukuran ikon lebih besar */
+  color: #537c91;
+  margin-bottom: 5px; /* Beri jarak antara ikon dan teks */
+}
+
+/* Menyembunyikan input file asli secara visual */
+.upload-box .file-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0; /* Membuat input tidak terlihat */
+  cursor: pointer;
+  z-index: 1; /* Pastikan input berada di atas, tapi tidak terlihat */
+}
+
+/* Gaya untuk teks "Choose File" */
+.upload-box .upload-text {
+    color: #34495e; /* Warna teks yang kontras */
+    font-weight: 600;
+    text-align: center;
+}
+
+/* Gaya untuk nama file yang terpilih, jika ada */
+.upload-box .selected-file-name {
+    margin-top: 10px;
+    font-size: 0.9em;
+    color: #6c757d;
+    word-break: break-all; /* Agar nama file panjang tidak keluar dari box */
+}

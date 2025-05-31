@@ -3,26 +3,24 @@ import React from "react";
 
 const VillaDetails = ({
   name, // Changed from title
-  location,
+  address, // Changed from location to address
   price,
   description,
   features,
   guests,
-  size, // Changed from area
+  area, // Changed from size to area
   bedType,
   onEdit,
 }) => (
   <div className="col-md-6">
     <h3 className="fw-bold">{name}</h3>
-    <h6 className="text-muted mb-1">{location}</h6>
-
+    <h6 className="text-muted mb-1">{address}</h6>{" "}
+    {/* Changed from location to address */}
     <h5 className="fw-bold text-dark mb-3">
       Rp. {price.toLocaleString("id-ID")}{" "}
       <span className="fw-normal text-muted">/ night</span>
     </h5>
-
     <p className="text-muted">{description}</p>
-
     <h6 className="fw-bold mt-4 mb-2">Room Features</h6>
     <ul className="text-muted mb-3">
       {features &&
@@ -33,10 +31,9 @@ const VillaDetails = ({
           ) => <li key={idx}>{f}</li>
         )}
       <li>Max Guests: {guests}</li>
-      <li>Size: {size}</li>
+      <li>Area: {area}</li> {/* Changed from Size to Area */}
       <li>Bed Type: {bedType}</li>
     </ul>
-
     <button
       className="btn rounded-pill text-white w-100 py-2"
       style={{ backgroundColor: "#5a7684" }}

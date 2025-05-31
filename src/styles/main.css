@@ -7,6 +7,12 @@ body {
   background-color: #d7e4ee;
 }
 
+/* Tambahkan atau modifikasi ini untuk konsistensi warna navbar */
+.navbar-primary-bg {
+  background-color: #ADD8E6;
+}
+
+
 .navbar .nav-link {
   color: #333;
 }

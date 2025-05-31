@@ -11,7 +11,7 @@ const dummyBooking = [
     name: "Arya Manurung",
     email: "arya@gmail.com",
     phone: "085000444000",
-    location: "Jl Bumi, Jawa Tengah", // Changed from address
+    address: "Jl Bumi, Jawa Tengah", // Changed from location to address
     villaName: "Graha Amerta", // Changed from title to villaName for clarity in booking context
     checkin: "30-05-2025",
     checkout: "01-06-2025",
@@ -22,7 +22,7 @@ const dummyBooking = [
     name: "Christifan Tius",
     email: "Tius@gmail.com",
     phone: "085222000111",
-    location: "Jl Bandung, Jawa Barat", // Changed from address
+    address: "Jl Bandung, Jawa Barat", // Changed from location to address
     villaName: "De Santika Nirwana", // Changed from title
     checkin: "30-05-2025",
     checkout: "01-06-2025",
@@ -33,7 +33,7 @@ const dummyBooking = [
     name: "Bai Khaba",
     email: "Khaba@gmail.com",
     phone: "087555666999",
-    location: "Yogyakarta", // Changed from address
+    address: "Yogyakarta", // Changed from location to address
     villaName: "Java de Villa", // Changed from title
     checkin: "30-05-2025",
     checkout: "01-06-2025",
@@ -134,7 +134,8 @@ const Owner = () => {
                     <td>{booking.name}</td>
                     <td>{booking.email}</td>
                     <td>{booking.phone}</td>
-                    <td>{booking.location}</td> {/* Changed from address */}
+                    <td>{booking.address}</td>{" "}
+                    {/* Changed from location to address */}
                     <td>{booking.villaName}</td> {/* Changed from title */}
                     <td>{booking.checkin}</td>
                     <td>{booking.checkout}</td>

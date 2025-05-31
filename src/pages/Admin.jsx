@@ -52,24 +52,24 @@ const dummyVillasForAdmin = [
   {
     id: 1,
     name: "Grand Barca Nirwana",
-    location: "Yogyakarta",
+    address: "Yogyakarta", // Changed from location to address
     owner: "Arya Manurung",
     status: "Pending",
-  }, // Changed from address to location
+  },
   {
     id: 2,
     name: "De Santika Nirwana",
-    location: "Ubud, Bali",
+    address: "Ubud, Bali", // Changed from location to address
     owner: "Budi Santoso",
     status: "Verified",
-  }, // Changed from address to location
+  },
   {
     id: 3,
     name: "Samudra Biru Tropika",
-    location: "Canggu, Bali",
+    address: "Canggu, Bali", // Changed from location to address
     owner: "Citra Dewi",
     status: "Rejected",
-  }, // Changed from address to location
+  },
 ];
 
 const villasListForDisplay = [
@@ -77,13 +77,13 @@ const villasListForDisplay = [
   {
     id: 1,
     name: "De Santika Nirwana", // Changed from title
-    location: "Ubud, Bali",
+    address: "Ubud, Bali", // Changed from location to address
     price: "Rp. 5.000.000/Night",
     image:
       "https://i.pinimg.com/73x/89/c1/df/89c1dfaf3e2bf035718cf2a76a16fd38.jpg",
     description: "Villa eksklusif dengan fasilitas premium...",
     guests: 6,
-    size: "24m²",
+    area: "24m²",
     bedType: "One King Bed",
     features: [
       "TV",
@@ -101,13 +101,13 @@ const villasListForDisplay = [
   {
     id: 2,
     name: "Grand Lavanya Hills", // Changed from title
-    location: "Ubud, Bali",
+    address: "Ubud, Bali", // Changed from location to address
     price: "Rp. 8.500.000/Night",
     image:
       "https://i.pinimg.com/73x/b3/1d/ac/b31dac2e3bf41b30d84f5e454e293b13.jpg",
     description: "Villa mewah dengan pemandangan bukit yang menakjubkan.",
     guests: 8,
-    size: "30m²",
+    area: "30m²",
     bedType: "Two King Beds",
     features: ["TV", "Free Wifi", "Private Pool", "Kitchen"],
     roomImages: [
@@ -118,13 +118,13 @@ const villasListForDisplay = [
   {
     id: 3,
     name: "Samudra Biru Tropika", // Changed from title
-    location: "Ubud, Bali",
+    address: "Ubud, Bali", // Changed from location to address
     price: "Rp. 4.500.000/Night",
     image:
       "http://i.pinimg.com/73x/28/a8/8d/28a88d79127329f7f6cb7be2a18ad2f0.jpg",
     description: "Nikmati ketenangan di villa dekat pantai.",
     guests: 4,
-    size: "20m²",
+    area: "20m²",
     bedType: "One Queen Bed",
     features: ["TV", "Free Wifi"],
     roomImages: [
@@ -138,35 +138,35 @@ const dummyBooking = [
     name: "Grand Barca Nirwana",
     email: "Yogyakarta",
     phone: "Arya Manurung",
-    location: "Jl Bandung, Jawa Barat",
+    address: "Jl Bandung, Jawa Barat", // Changed from location to address
     villaName: "De Santika Nirwana",
     checkin: "30-05-2025",
     checkout: "01-06-2025",
     price: "Rp. 5.000.000",
     status: "Booked",
-  }, // Changed address to location, title to villaName
+  },
   {
     name: "Grand Barca Nirwana",
     email: "Yogyakarta",
     phone: "Arya Manurung",
-    location: "Jl Bandung, Jawa Barat",
+    address: "Jl Bandung, Jawa Barat", // Changed from location to address
     villaName: "De Santika Nirwana",
     checkin: "30-05-2025",
     checkout: "01-06-2025",
     price: "Rp. 5.000.000",
     status: "Pending",
-  }, // Changed address to location, title to villaName
+  },
   {
     name: "Grand Barca Nirwana",
     email: "Yogyakarta",
     phone: "Arya Manurung",
-    location: "Jl Bandung, Jawa Barat",
+    address: "Jl Bandung, Jawa Barat", // Changed from location to address
     villaName: "De Santika Nirwana",
     checkin: "30-05-2025",
     checkout: "01-06-2025",
     price: "Rp. 5.000.000",
     status: "Cancel",
-  }, // Changed address to location, title to villaName
+  },
 ];
 
 const Admin = () => {
@@ -252,7 +252,7 @@ const Admin = () => {
                 <tr>
                   <th>Villa Name</th>
                   <th>Address</th>{" "}
-                  {/* Display as Address for table, but data is 'location' */}
+                  {/* Display as Address for table, but data is 'address' */}
                   <th>Owner</th>
                   <th>Action</th>
                 </tr>
@@ -261,7 +261,8 @@ const Admin = () => {
                 {dummyVillasForAdmin.map((villa, index) => (
                   <tr key={index}>
                     <td>{villa.name}</td>
-                    <td>{villa.location}</td> {/* Changed from address */}
+                    <td>{villa.address}</td>{" "}
+                    {/* Changed from location to address */}
                     <td>{villa.owner}</td>
                     <td>
                       <button
@@ -322,7 +323,8 @@ const Admin = () => {
                     <td>{booking.name}</td>
                     <td>{booking.email}</td>
                     <td>{booking.phone}</td>
-                    <td>{booking.location}</td> {/* Changed from address */}
+                    <td>{booking.address}</td>{" "}
+                    {/* Changed from location to address */}
                     <td>{booking.villaName}</td> {/* Changed from title */}
                     <td>{booking.checkin}</td>
                     <td>{booking.checkout}</td>
