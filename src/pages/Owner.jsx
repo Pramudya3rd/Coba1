@@ -1,60 +1,53 @@
+// src/pages/Owner.jsx
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import SidebarOwner from "../components/SidebarOwner";
 import MyVillaTable from "../components/MyVilla/MyVillaTable";
 import "../styles/owner.css";
-
-const dummyBooking = [
-  {
-    name: "Arya Manurung",
-    email: "arya@gmail.com",
-    phone: "085000444000",
-    address: "Jl Bumi, Jawa Tengah",
-    title: "Graha Amerta",
-    checkin: "30-05-2025",
-    checkout: "01-06-2025",
-    price: "Rp. 5.000.000",
-    status: "Booked",
-  },
-  {
-    name: "Christifan Tius",
-    email: "Tius@gmail.com",
-    phone: "085222000111",
-    address: "Jl Bandung, Jawa Barat",
-    title: "De Santika Nirwana",
-    checkin: "30-05-2025",
-    checkout: "01-06-2025",
-    price: "Rp. 5.000.000",
-    status: "Pending",
-  },
-  {
-    name: "Bai Khaba",
-    email: "Khaba@gmail.com",
-    phone: "087555666999",
-    address: "Yogyakarta",
-    title: "Java de Villa",
-    checkin: "30-05-2025",
-    checkout: "01-06-2025",
-    price: "Rp. 5.000.000",
-    status: "Cancel",
-  },
-];
+import api from "../api/axios"; // Import axios
 
 const Owner = () => {
   const navigate = useNavigate();
   const [activeMenu, setActiveMenu] = useState("dashboard");
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const profileRef = useRef(null);
+  const [bookings, setBookings] = useState([]); // State untuk booking
+  const [loadingBookings, setLoadingBookings] = useState(true);
+  const [errorBookings, setErrorBookings] = useState(null);
 
   const handleAddVilla = () => {
     navigate("/add-villa");
   };
 
   const handleLogout = () => {
-    // Tambahkan logic logout (misal hapus token) di sini
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     navigate("/login");
   };
+
+  // Fungsi untuk mengambil daftar booking untuk owner
+  const fetchOwnerBookings = async () => {
+    setLoadingBookings(true);
+    setErrorBookings(null);
+    try {
+      // Backend akan otomatis memfilter berdasarkan ownerId dari token
+      const response = await api.get("/bookings");
+      setBookings(response.data.data);
+    } catch (err) {
+      console.error("Error fetching owner's bookings:", err);
+      setErrorBookings("Gagal memuat daftar pemesanan Anda.");
+    } finally {
+      setLoadingBookings(false);
+    }
+  };
+
+  // Efek untuk memuat booking saat menu "booking" aktif
+  useEffect(() => {
+    if (activeMenu === "booking") {
+      fetchOwnerBookings();
+    }
+  }, [activeMenu]); // Jalankan ketika activeMenu berubah
 
   // Close dropdown jika klik di luar icon dan dropdown
   useEffect(() => {
@@ -68,6 +61,25 @@ const Owner = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  // Fungsi untuk mengupdate status booking
+  const handleUpdateBookingStatus = async (bookingId, newStatus) => {
+    try {
+      await api.put(`/bookings/${bookingId}/status`, { status: newStatus });
+      alert(`Status booking berhasil diubah menjadi ${newStatus}.`);
+      fetchOwnerBookings(); // Refresh daftar booking setelah update
+    } catch (err) {
+      console.error(
+        "Error updating booking status:",
+        err.response?.data || err.message
+      );
+      alert(
+        `Gagal mengubah status booking: ${
+          err.response?.data?.message || err.message
+        }`
+      );
+    }
+  };
 
   return (
     <div className="owner-page">
@@ -89,7 +101,7 @@ const Owner = () => {
               <button
                 className="dropdown-item px-4 py-1 text-start"
                 onClick={handleLogout}
-                style={{ color: 'inherit', fontWeight: 'normal' }}
+                style={{ color: "inherit", fontWeight: "normal" }}
               >
                 Logout
               </button>
@@ -108,43 +120,83 @@ const Owner = () => {
             <button className="add-villa-btn" onClick={handleAddVilla}>
               Add Villa
             </button>
-            <MyVillaTable />
+            <MyVillaTable /> {/* MyVillaTable akan fetch datanya sendiri */}
           </div>
         )}
 
         {activeMenu === "booking" && (
           <div className="booking-section">
             <h3>Booking List</h3>
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>Address</th>
-                  <th>Villa</th>
-                  <th>Check-in</th>
-                  <th>Check-out</th>
-                  <th>Price</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {dummyBooking.map((booking, index) => (
-                  <tr key={index}>
-                    <td>{booking.name}</td>
-                    <td>{booking.email}</td>
-                    <td>{booking.phone}</td>
-                    <td>{booking.address}</td>
-                    <td>{booking.title}</td>
-                    <td>{booking.checkin}</td>
-                    <td>{booking.checkout}</td>
-                    <td>{booking.price}</td>
-                    <td>{booking.status}</td>
+            {loadingBookings ? (
+              <div className="text-center">Memuat pemesanan...</div>
+            ) : errorBookings ? (
+              <div className="alert alert-danger text-center">
+                {errorBookings}
+              </div>
+            ) : bookings.length === 0 ? (
+              <div className="text-center">
+                Tidak ada pemesanan untuk villa Anda.
+              </div>
+            ) : (
+              <table>
+                <thead>
+                  <tr>
+                    <th>Nama Pengguna</th>
+                    <th>Email Pengguna</th>
+                    <th>Telepon Pengguna</th>
+                    <th>Villa</th>
+                    <th>Check-in</th>
+                    <th>Check-out</th>
+                    <th>Harga Total</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {bookings.map((booking) => (
+                    <tr key={booking.id}>
+                      <td>{booking.user.name}</td>
+                      <td>{booking.user.email}</td>
+                      <td>{booking.user.phone}</td>
+                      <td>{booking.villa.name}</td>
+                      <td>
+                        {new Date(booking.checkInDate).toLocaleDateString()}
+                      </td>
+                      <td>
+                        {new Date(booking.checkOutDate).toLocaleDateString()}
+                      </td>
+                      <td>
+                        Rp.{" "}
+                        {parseFloat(booking.totalPrice).toLocaleString("id-ID")}
+                      </td>
+                      <td>{booking.status}</td>
+                      <td>
+                        {booking.status === "pending" && (
+                          <button
+                            className="btn btn-sm btn-success me-2"
+                            onClick={() =>
+                              handleUpdateBookingStatus(booking.id, "confirmed")
+                            }
+                          >
+                            Konfirmasi
+                          </button>
+                        )}
+                        {booking.status !== "cancelled" && (
+                          <button
+                            className="btn btn-sm btn-danger"
+                            onClick={() =>
+                              handleUpdateBookingStatus(booking.id, "cancelled")
+                            }
+                          >
+                            Batal
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         )}
       </div>

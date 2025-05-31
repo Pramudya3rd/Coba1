@@ -1,30 +1,54 @@
+// src/components/LoginUser.jsx
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom"; 
+import { Link, useNavigate } from "react-router-dom";
 import LoginImg from "../assets/login.jpg";
 import "../styles/login.css";
+import api from "../api/axios"; // Import instance axios
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState(""); // State untuk pesan error
 
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+    // Tambahkan 'async' di sini
     e.preventDefault();
+    setError(""); // Reset pesan error sebelumnya
 
     if (!email || !password) {
       setError("Email dan password harus diisi.");
-    } else {
-      setError("");
-      console.log("Logging in with:", { email, password });
+      return;
+    }
 
-      navigate("/homepage");
+    try {
+      const response = await api.post("/auth/login", { email, password }); // Gunakan instance api
+      console.log("Login berhasil:", response.data);
+
+      // Simpan token dan data user ke localStorage
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+
+      // Arahkan berdasarkan role user
+      const userRole = response.data.user.role;
+      if (userRole === "admin") {
+        navigate("/admin-page");
+      } else if (userRole === "owner") {
+        navigate("/owner-page");
+      } else {
+        navigate("/homepage"); // Default untuk role 'user'
+      }
+    } catch (err) {
+      console.error("Error saat login:", err.response?.data || err.message);
+      setError(
+        err.response?.data?.message || "Login gagal. Email atau password salah."
+      );
     }
   };
 
@@ -99,9 +123,7 @@ const LoginPage = () => {
                   }}
                 >
                   <i
-                    className={`bi ${
-                      showPassword ? "bi-eye-slash" : "bi-eye"
-                    }`}
+                    className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"}`}
                   ></i>
                 </span>
               </div>
@@ -132,12 +154,14 @@ const LoginPage = () => {
               <div className="text-center mt-3">
                 <span style={{ fontSize: "0.9rem", color: "#6c757d" }}>
                   Don’t have an account?{" "}
-                  <Link to="/register" style={{ color: "#34495e", textDecoration: "none" }}>
+                  <Link
+                    to="/register"
+                    style={{ color: "#34495e", textDecoration: "none" }}
+                  >
                     Register here
                   </Link>
                 </span>
               </div>
-
             </div>
           </form>
         </div>

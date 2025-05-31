@@ -1,7 +1,9 @@
+// src/components/RegisterForm.jsx
 import React, { useState } from "react";
 import RegisterImg from "../assets/Register.png";
 import { useNavigate } from "react-router-dom";
-import "../styles/register.css"; 
+import "../styles/register.css";
+import api from "../api/axios"; // Import instance axios
 
 const RegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -12,6 +14,8 @@ const RegisterPage = () => {
     password: "",
     role: "",
   });
+  const [message, setMessage] = useState(""); // State untuk pesan sukses/error
+  const [isError, setIsError] = useState(false); // State untuk menunjukkan apakah pesan adalah error
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,12 +28,40 @@ const RegisterPage = () => {
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+    // Tambahkan 'async' di sini
     e.preventDefault();
-    console.log("Registering with:", form);
-    // lanjut nantii fetch/axios post ke backend di sini 
+    setMessage(""); // Reset pesan sebelumnya
+    setIsError(false);
 
-    navigate("/login");
+    // Validasi sisi klien dasar
+    if (!form.name || !form.email || !form.password || !form.role) {
+      setMessage("Semua field wajib diisi.");
+      setIsError(true);
+      return;
+    }
+
+    try {
+      const response = await api.post("/auth/register", form); // Gunakan instance api
+      console.log("Pendaftaran berhasil:", response.data);
+      setMessage(response.data.message || "Pendaftaran berhasil!");
+      setIsError(false);
+      // Simpan token ke localStorage jika diperlukan (opsional, karena setelah register biasanya langsung login)
+      // localStorage.setItem('token', response.data.token);
+      // localStorage.setItem('user', JSON.stringify(response.data.user));
+
+      alert(response.data.message + " Silakan login."); // Pemberitahuan ke user
+      navigate("/login"); // Arahkan ke halaman login
+    } catch (error) {
+      console.error(
+        "Error saat pendaftaran:",
+        error.response?.data || error.message
+      );
+      setMessage(
+        error.response?.data?.message || "Pendaftaran gagal. Terjadi kesalahan."
+      );
+      setIsError(true);
+    }
   };
 
   return (
@@ -50,9 +82,24 @@ const RegisterPage = () => {
       >
         <div className="register-form w-100" style={{ maxWidth: "400px" }}>
           <h3 className="text-center mb-4 fw-bold text-dark">REGISTER</h3>
+
+          {/* Tampilkan pesan sukses/error */}
+          {message && (
+            <div
+              className={`alert mb-3 py-2 px-3 ${
+                isError ? "alert-danger" : "alert-success"
+              }`}
+              role="alert"
+            >
+              {message}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
-              <label htmlFor="name" className="form-label">Name</label>
+              <label htmlFor="name" className="form-label">
+                Name
+              </label>
               <input
                 type="text"
                 className="form-control rounded-3"
@@ -64,7 +111,9 @@ const RegisterPage = () => {
             </div>
 
             <div className="mb-3">
-              <label htmlFor="email" className="form-label">Email</label>
+              <label htmlFor="email" className="form-label">
+                Email
+              </label>
               <input
                 type="email"
                 className="form-control rounded-3"
@@ -76,7 +125,9 @@ const RegisterPage = () => {
             </div>
 
             <div className="mb-3">
-              <label htmlFor="phone" className="form-label">Phone Number</label>
+              <label htmlFor="phone" className="form-label">
+                Phone Number
+              </label>
               <input
                 type="text"
                 className="form-control rounded-3"
@@ -88,8 +139,16 @@ const RegisterPage = () => {
             </div>
 
             <div className="mb-3">
-              <label htmlFor="password" className="form-label">Password</label>
-              <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
+              <label htmlFor="password" className="form-label">
+                Password
+              </label>
+              <div
+                style={{
+                  position: "relative",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
                 <input
                   type={showPassword ? "text" : "password"}
                   className="form-control rounded-3"
@@ -106,17 +165,20 @@ const RegisterPage = () => {
                     right: "1rem",
                     transform: "translateY(-50%)",
                     cursor: "pointer",
-                    color: "#6c757d"
+                    color: "#6c757d",
                   }}
                 >
-                  <i className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"}`}></i>
+                  <i
+                    className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"}`}
+                  ></i>
                 </span>
               </div>
             </div>
 
-            {/* Role */}
             <div className="mb-4">
-              <label htmlFor="role" className="form-label">Role</label>
+              <label htmlFor="role" className="form-label">
+                Role
+              </label>
               <select
                 name="role"
                 className="form-select rounded-3"
@@ -124,14 +186,18 @@ const RegisterPage = () => {
                 onChange={handleChange}
               >
                 <option value="">Select role</option>
+                <option value="user">User</option>
                 <option value="owner">Owner</option>
                 <option value="admin">Admin</option>
               </select>
             </div>
 
-            {/* Submit */}
             <div className="d-grid">
-              <button type="submit" className="btn btn-lg rounded-3 text-white" style={{ backgroundColor: "#5e869e" }}>
+              <button
+                type="submit"
+                className="btn btn-lg rounded-3 text-white"
+                style={{ backgroundColor: "#5e869e" }}
+              >
                 Register
               </button>
             </div>

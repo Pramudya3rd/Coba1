@@ -1,5 +1,6 @@
-import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+// src/components/Detail.jsx
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom"; // Ini adalah objek lokasi dari react-router-dom
 import {
   FaStar,
   FaBed,
@@ -7,49 +8,92 @@ import {
   FaRulerCombined,
   FaUserFriends,
 } from "react-icons/fa";
+import api from "../api/axios";
 
 const Detail = () => {
-  const location = useLocation();
+  const location = useLocation(); // Ini adalah objek lokasi dari react-router-dom
   const navigate = useNavigate();
-  const {
-    title = "De Santika Nirwana",
-    location: loc = "Ubud, Bali",
-    price = 5000000,
-    mainImage:
-      image = "https://i.pinimg.com/736x/89/c1/df/89c1dfaf3e2bf035718cf2a76a16fd38.jpg",
-    description = "Experience ultimate relaxation in a luxury villa surrounded by tropical scenery. Ideal for families, couples, or anyone looking for a peaceful getaway with complete amenities.",
-    features = [
-      "TV",
-      "Free Wifi",
-      "Air Conditioner",
-      "Heater",
-      "Private Bathroom",
-    ],
-    guestCapacity: guests = 6,
-    size: area = "24m²",
-    bedType = "One King Bed",
-  } = location.state || {};
+  const [villa, setVilla] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const roomImages = [
-    "https://i.pinimg.com/736x/a8/bc/50/a8bc50298db283746524f3c82bbd9465.jpg",
-    "https://i.pinimg.com/736x/79/0b/56/790b56d61da6b4b2bd1301da3385b085.jpg",
-    "https://i.pinimg.com/736x/47/96/a1/4796a1d06f323c31fd2c7407c43788b9.jpg",
-  ];
+  const villaId = location.state?.id;
+
+  useEffect(() => {
+    if (!villaId) {
+      setError("ID Villa tidak ditemukan.");
+      setLoading(false);
+      return;
+    }
+
+    const fetchVillaDetails = async () => {
+      try {
+        const response = await api.get(`/villas/${villaId}`);
+        setVilla(response.data.data);
+      } catch (err) {
+        console.error("Error fetching villa details:", err);
+        setError(err.response?.data?.message || "Gagal memuat detail villa.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVillaDetails();
+  }, [villaId]);
+
+  if (loading) {
+    return <div className="text-center my-5">Memuat detail villa...</div>;
+  }
+
+  if (error) {
+    return <div className="alert alert-danger text-center my-5">{error}</div>;
+  }
+
+  if (!villa) {
+    return <div className="text-center my-5">Detail villa tidak tersedia.</div>;
+  }
 
   const handleBooking = () => {
     navigate("/booking", {
-      state: { title, price },
+      state: {
+        villaId: villa.id,
+        title: villa.name,
+        pricePerNight: villa.pricePerNight,
+        mainImage: villa.mainImage,
+      },
     });
   };
+
+  const {
+    name,
+    location: villaLocation, // <--- UBAH INI
+    pricePerNight,
+    mainImage,
+    description,
+    features,
+    guestCapacity,
+    size,
+    bedType,
+    additionalImages,
+  } = villa;
+
+  const allImages = mainImage
+    ? [mainImage, ...additionalImages]
+    : additionalImages;
+  const roomImagesForThumbnails =
+    allImages.length > 1 ? allImages.slice(1) : [];
 
   return (
     <div className="container py-5">
       <div className="row g-5">
-        {/* Main image and thumbnails */}
         <div className="col-md-6">
-          <img src={image} alt={title} className="img-fluid rounded-4 mb-3" />
+          <img
+            src={mainImage}
+            alt={name}
+            className="img-fluid rounded-4 mb-3"
+          />
           <div className="row g-3">
-            {roomImages.map((img, i) => (
+            {roomImagesForThumbnails.map((img, i) => (
               <div className="col-4" key={i}>
                 <img
                   src={img}
@@ -62,9 +106,8 @@ const Detail = () => {
           </div>
         </div>
 
-        {/* Villa Detail Info */}
         <div className="col-md-6">
-          <h3 className="fw-bold">{title}</h3>
+          <h3 className="fw-bold">{name}</h3>
           <p className="mb-2">
             <span className="text-warning">
               {[...Array(5)].map((_, i) => (
@@ -76,25 +119,26 @@ const Detail = () => {
             </span>
           </p>
           <h5 className="fw-bold text-dark mb-3">
-            Rp. {price.toLocaleString("id-ID")}{" "}
+            Rp. {parseFloat(pricePerNight).toLocaleString("id-ID")}{" "}
             <span className="fw-normal text-muted">/ night</span>
           </h5>
           <p className="text-muted">{description}</p>
 
           <h6 className="fw-bold mt-4 mb-2">Room Features</h6>
           <div className="row row-cols-2 mb-3 text-muted">
-            {features.map((feature, i) => (
-              <div className="col mb-2" key={i}>
-                {feature}
-              </div>
-            ))}
+            {features &&
+              features.map((feature, i) => (
+                <div className="col mb-2" key={i}>
+                  {feature}
+                </div>
+              ))}
             <div className="col mb-2">
               <FaUserFriends className="me-2" />
-              Max Guests: <strong>{guests}</strong>
+              Max Guests: <strong>{guestCapacity}</strong>
             </div>
             <div className="col mb-2">
               <FaRulerCombined className="me-2" />
-              Size: <strong>{area}</strong>
+              Size: <strong>{size}</strong>
             </div>
             <div className="col mb-2">
               <FaBed className="me-2" />

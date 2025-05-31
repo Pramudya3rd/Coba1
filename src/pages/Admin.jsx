@@ -1,139 +1,101 @@
-import React, { useState } from "react";
+// src/pages/Admin.jsx
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/SidebarAdmin";
 import VillaCard from "../components/VillaCard";
 import "../styles/SideBar.css";
-
-const dummyUsers = [
-  {
-    name: "Grand Barca Nirwana",
-    email: "Yogyakarta",
-    phone: "Arya Manurung",
-    address: "Jl Bandung, Jawa Barat",
-  },
-  {
-    name: "Grand Barca Nirwana",
-    email: "Yogyakarta",
-    phone: "Arya Manurung",
-    address: "Jl Bandung, Jawa Barat",
-  },
-  {
-    name: "Grand Barca Nirwana",
-    email: "Yogyakarta",
-    phone: "Arya Manurung",
-    address: "Jl Bandung, Jawa Barat",
-  },
-];
-
-const dummyOwners = [
-  {
-    name: "Arya Manurung",
-    email: "arya@example.com",
-    phone: "081234567890",
-    villaName: "The Sun Rise",
-  },
-  {
-    name: "Christifan Tius",
-    email: "tius@example.com",
-    phone: "081234567891",
-    villaName: "Jasmine The Ae",
-  },
-  {
-    name: "Bai Khaba",
-    email: "khaba@example.com",
-    phone: "087555666999",
-    villaName: "Lime on Tea",
-  },
-];
-
-const dummyVillas = [
-  {
-    name: "Grand Barca Nirwana",
-    address: "Yogyakarta",
-    owner: "Arya Manurung",
-  },
-  {
-    name: "Grand Barca Nirwana",
-    address: "Yogyakarta",
-    owner: "Arya Manurung",
-  },
-  {
-    name: "Grand Barca Nirwana",
-    address: "Yogyakarta",
-    owner: "Arya Manurung",
-  },
-];
-
-const villas = [
-  {
-    title: "De Santika Nirwana",
-    location: "Ubud, Bali",
-    price: 5000000,
-    image:
-      "https://i.pinimg.com/736x/89/c1/df/89c1dfaf3e2bf035718cf2a76a16fd38.jpg",
-  },
-  {
-    title: "Grand Lavanya Hills",
-    location: "Ubud, Bali",
-    price: 8500000,
-    image:
-      "https://i.pinimg.com/736x/b3/1d/ac/b31dac2e3bf41b30d84f5e454e293b13.jpg",
-  },
-  {
-    title: "Samudra Biru Tropika",
-    location: "Ubud, Bali",
-    price: 4500000,
-    image:
-      "http://i.pinimg.com/736x/28/a8/8d/28a88d79127329f7f6cb7be2a18ad2f0.jpg",
-  },
-];
-
-const dummyBooking = [
-  {
-    name: "Grand Barca Nirwana",
-    email: "Yogyakarta",
-    phone: "Arya Manurung",
-    address: "Jl Bandung, Jawa Barat",
-    title: "De Santika Nirwana",
-    checkin: "30-05-2025",
-    checkout: "01-06-2025",
-    price: "Rp. 5.000.000",
-    status: "Booked",
-  },
-  {
-    name: "Grand Barca Nirwana",
-    email: "Yogyakarta",
-    phone: "Arya Manurung",
-    address: "Jl Bandung, Jawa Barat",
-    title: "De Santika Nirwana",
-    checkin: "30-05-2025",
-    checkout: "01-06-2025",
-    price: "Rp. 5.000.000",
-    status: "Pending",
-  },
-  {
-    name: "Grand Barca Nirwana",
-    email: "Yogyakarta",
-    phone: "Arya Manurung",
-    address: "Jl Bandung, Jawa Barat",
-    title: "De Santika Nirwana",
-    checkin: "30-05-2025",
-    checkout: "01-06-2025",
-    price: "Rp. 5.000.000",
-    status: "Cancel",
-  },
-];
+import api from "../api/axios"; // Import axios
 
 const Admin = () => {
   const [activeMenu, setActiveMenu] = useState("dashboard");
   const navigate = useNavigate();
 
-  const handleApprove = (villaName) => {
-    alert(`Approved: ${villaName}`);
+  const [users, setUsers] = useState([]);
+  const [owners, setOwners] = useState([]); // Owners adalah user dengan role 'owner'
+  const [villasToUpdate, setVillasToUpdate] = useState([]); // Villa dengan status pending/rejected
+  const [allVillas, setAllVillas] = useState([]); // Semua villa untuk daftar umum
+  const [bookings, setBookings] = useState([]);
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchData = async (endpoint, setter) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await api.get(endpoint);
+      setter(response.data.data);
+    } catch (err) {
+      console.error(`Error fetching data from ${endpoint}:`, err);
+      setError(`Gagal memuat data dari ${endpoint}.`);
+      setter([]); // Kosongkan data jika gagal
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleReject = (villaName) => {
-    alert(`Rejected: ${villaName}`);
+  useEffect(() => {
+    if (activeMenu === "user") {
+      fetchData("/users", setUsers);
+    } else if (activeMenu === "owner") {
+      // Filter owners dari semua user, atau jika ada endpoint khusus
+      fetchData("/users", (data) => {
+        setOwners(data.filter((user) => user.role === "owner"));
+      });
+    } else if (activeMenu === "updateVilla") {
+      // Admin melihat semua villa, dan kita bisa filter di frontend untuk status pending/rejected
+      fetchData("/villas", (data) => {
+        setVillasToUpdate(data.filter((villa) => villa.status !== "verified"));
+      });
+    } else if (activeMenu === "villaList") {
+      // Admin melihat semua villa
+      fetchData("/villas", setAllVillas);
+    } else if (activeMenu === "booking") {
+      fetchData("/bookings", setBookings);
+    }
+  }, [activeMenu]); // Tambahkan dependensi activeMenu
+
+  // Fungsi untuk mengubah status villa (Approve/Reject)
+  const handleUpdateVillaStatus = async (villaId, newStatus) => {
+    try {
+      await api.put(`/villas/${villaId}/status`, { status: newStatus });
+      alert(`Status villa berhasil diubah menjadi ${newStatus}.`);
+      // Refresh daftar villa yang perlu diupdate
+      fetchData("/villas", (data) => {
+        setVillasToUpdate(data.filter((villa) => villa.status !== "verified"));
+      });
+      // Refresh daftar semua villa juga, jika relevan
+      fetchData("/villas", setAllVillas);
+    } catch (err) {
+      console.error(
+        "Error updating villa status:",
+        err.response?.data || err.message
+      );
+      alert(
+        `Gagal mengubah status villa: ${
+          err.response?.data?.message || err.message
+        }`
+      );
+    }
+  };
+
+  // Fungsi untuk mengubah status booking (Konfirmasi/Batal/Selesai)
+  const handleUpdateBookingStatus = async (bookingId, newStatus) => {
+    try {
+      await api.put(`/bookings/${bookingId}/status`, { status: newStatus });
+      alert(`Status booking berhasil diubah menjadi ${newStatus}.`);
+      fetchData("/bookings", setBookings); // Refresh daftar booking
+    } catch (err) {
+      console.error(
+        "Error updating booking status:",
+        err.response?.data || err.message
+      );
+      alert(
+        `Gagal mengubah status booking: ${
+          err.response?.data?.message || err.message
+        }`
+      );
+    }
   };
 
   return (
@@ -150,147 +112,237 @@ const Admin = () => {
         {activeMenu === "user" && (
           <div className="user-table">
             <h4>USER</h4>
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>Address</th>
-                </tr>
-              </thead>
-              <tbody>
-                {dummyUsers.map((user, index) => (
-                  <tr key={index}>
-                    <td>{user.name}</td>
-                    <td>{user.email}</td>
-                    <td>{user.phone}</td>
-                    <td>{user.address}</td>
+            {loading ? (
+              <div className="text-center">Memuat daftar user...</div>
+            ) : error ? (
+              <div className="alert alert-danger text-center">{error}</div>
+            ) : users.length === 0 ? (
+              <div className="text-center">Tidak ada user terdaftar.</div>
+            ) : (
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Role</th> {/* Tambahkan kolom Role */}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {users.map((user) => (
+                    <tr key={user.id}>
+                      <td>{user.name}</td>
+                      <td>{user.email}</td>
+                      <td>{user.phone}</td>
+                      <td>{user.role}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         )}
 
         {activeMenu === "owner" && (
           <div className="user-table">
             <h4>OWNER VILLA</h4>
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>Villa Name</th>
-                </tr>
-              </thead>
-              <tbody>
-                {dummyOwners.map((owner, index) => (
-                  <tr key={index}>
-                    <td>{owner.name}</td>
-                    <td>{owner.email}</td>
-                    <td>{owner.phone}</td>
-                    <td>{owner.villaName}</td>
+            {loading ? (
+              <div className="text-center">Memuat daftar owner...</div>
+            ) : error ? (
+              <div className="alert alert-danger text-center">{error}</div>
+            ) : owners.length === 0 ? (
+              <div className="text-center">Tidak ada owner terdaftar.</div>
+            ) : (
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Villa Name</th>{" "}
+                    {/* Kolom ini akan sulit diisi jika owner punya banyak villa */}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {owners.map((owner) => (
+                    <tr key={owner.id}>
+                      <td>{owner.name}</td>
+                      <td>{owner.email}</td>
+                      <td>{owner.phone}</td>
+                      {/* Untuk "Villa Name", Anda perlu fetch villa milik owner secara terpisah
+                          atau modifikasi backend untuk menyertakan daftar villa per owner.
+                          Untuk sementara, kita bisa biarkan kosong atau tampilkan pesan. */}
+                      <td>{/* Owner villa name from data, if available */}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         )}
 
         {activeMenu === "updateVilla" && (
           <div className="user-table">
             <h4>UPDATE VILLA</h4>
-            <table>
-              <thead>
-                <tr>
-                  <th>Villa Name</th>
-                  <th>Address</th>
-                  <th>Owner</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {dummyVillas.map((villa, index) => (
-                  <tr key={index}>
-                    <td>{villa.name}</td>
-                    <td>{villa.address}</td>
-                    <td>{villa.owner}</td>
-                    <td>
-                      <button
-                        className="btn-approve"
-                        onClick={() => handleApprove(villa.name)}
-                      >
-                        Approve
-                      </button>
-                      <button
-                        className="btn-reject"
-                        onClick={() => handleReject(villa.name)}
-                      >
-                        Reject
-                      </button>
-                    </td>
+            {loading ? (
+              <div className="text-center">Memuat villa untuk diupdate...</div>
+            ) : error ? (
+              <div className="alert alert-danger text-center">{error}</div>
+            ) : villasToUpdate.length === 0 ? (
+              <div className="text-center">
+                Tidak ada villa yang menunggu verifikasi.
+              </div>
+            ) : (
+              <table>
+                <thead>
+                  <tr>
+                    <th>Villa Name</th>
+                    <th>Address</th>
+                    <th>Owner</th>
+                    <th>Status</th>
+                    <th>Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {villasToUpdate.map((villa) => (
+                    <tr key={villa.id}>
+                      <td>{villa.name}</td>
+                      <td>{villa.location}</td>
+                      <td>{villa.owner?.name || "N/A"}</td>{" "}
+                      {/* Tampilkan nama owner */}
+                      <td>{villa.status}</td>
+                      <td>
+                        <button
+                          className="btn-approve"
+                          onClick={() =>
+                            handleUpdateVillaStatus(villa.id, "verified")
+                          }
+                        >
+                          Approve
+                        </button>
+                        <button
+                          className="btn-reject"
+                          onClick={() =>
+                            handleUpdateVillaStatus(villa.id, "rejected")
+                          }
+                        >
+                          Reject
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         )}
 
         {activeMenu === "villaList" && (
           <div className="villa-list-section">
             <h4>LIST VILLA</h4>
-            <div className="row g-4 justify-content-center">
-              {villas.map((villa, index) => (
-                <VillaCard
-                  key={index}
-                  title={villa.title}
-                  location={villa.location}
-                  price={villa.price}
-                  image={villa.image}
-                  onBookNow={() =>
-                    navigate("/villa-detail", { state: { ...villa } })
-                  }
-                />
-              ))}
-            </div>
+            {loading ? (
+              <div className="text-center">Memuat daftar villa...</div>
+            ) : error ? (
+              <div className="alert alert-danger text-center">{error}</div>
+            ) : allVillas.length === 0 ? (
+              <div className="text-center">Tidak ada villa terdaftar.</div>
+            ) : (
+              <div className="row g-4 justify-content-center">
+                {allVillas.map((villa) => (
+                  <VillaCard
+                    key={villa.id}
+                    id={villa.id}
+                    title={villa.name}
+                    location={villa.location}
+                    price={villa.pricePerNight}
+                    image={villa.mainImage}
+                    onBookNow={() =>
+                      navigate("/villa-detail", { state: { id: villa.id } })
+                    }
+                  />
+                ))}
+              </div>
+            )}
           </div>
         )}
 
         {activeMenu === "booking" && (
           <div className="user-table">
             <h4>LIST BOOKING</h4>
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>Address</th>
-                  <th>Villa</th>
-                  <th>Check-in</th>
-                  <th>Check-Out</th>
-                  <th>Price</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {dummyBooking.map((booking, index) => (
-                  <tr key={index}>
-                    <td>{booking.name}</td>
-                    <td>{booking.email}</td>
-                    <td>{booking.phone}</td>
-                    <td>{booking.address}</td>
-                    <td>{booking.title}</td>
-                    <td>{booking.checkin}</td>
-                    <td>{booking.checkout}</td>
-                    <td>{booking.price}</td>
-                    <td>{booking.status}</td>
+            {loading ? (
+              <div className="text-center">Memuat daftar booking...</div>
+            ) : error ? (
+              <div className="alert alert-danger text-center">{error}</div>
+            ) : bookings.length === 0 ? (
+              <div className="text-center">Tidak ada booking.</div>
+            ) : (
+              <table>
+                <thead>
+                  <tr>
+                    <th>Nama Pengguna</th>
+                    <th>Email Pengguna</th>
+                    <th>Villa</th>
+                    <th>Check-in</th>
+                    <th>Check-Out</th>
+                    <th>Harga Total</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {bookings.map((booking) => (
+                    <tr key={booking.id}>
+                      <td>{booking.user?.name || "N/A"}</td>
+                      <td>{booking.user?.email || "N/A"}</td>
+                      <td>{booking.villa?.name || "N/A"}</td>
+                      <td>
+                        {new Date(booking.checkInDate).toLocaleDateString()}
+                      </td>
+                      <td>
+                        {new Date(booking.checkOutDate).toLocaleDateString()}
+                      </td>
+                      <td>
+                        Rp.{" "}
+                        {parseFloat(booking.totalPrice).toLocaleString("id-ID")}
+                      </td>
+                      <td>{booking.status}</td>
+                      <td>
+                        {booking.status === "pending" && (
+                          <button
+                            className="btn btn-sm btn-success me-2"
+                            onClick={() =>
+                              handleUpdateBookingStatus(booking.id, "confirmed")
+                            }
+                          >
+                            Konfirmasi
+                          </button>
+                        )}
+                        {booking.status !== "cancelled" && (
+                          <button
+                            className="btn btn-sm btn-danger"
+                            onClick={() =>
+                              handleUpdateBookingStatus(booking.id, "cancelled")
+                            }
+                          >
+                            Batal
+                          </button>
+                        )}
+                        {booking.status === "confirmed" && (
+                          <button
+                            className="btn btn-sm btn-info"
+                            onClick={() =>
+                              handleUpdateBookingStatus(booking.id, "completed")
+                            }
+                          >
+                            Selesai
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         )}
       </div>

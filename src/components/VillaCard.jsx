@@ -1,16 +1,21 @@
+// src/components/VillaCard.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/VillaCard.css";
 import { FaStar } from "react-icons/fa";
 
-const VillaCard = ({ title, location, price, image, onBookNow }) => {
+const VillaCard = ({ id, title, location, price, image, onBookNow }) => {
+  // Tambahkan 'id' di props
   const navigate = useNavigate();
 
   const handleBookNow = () => {
     if (onBookNow) {
       onBookNow();
     } else {
-      navigate("/villa-detail", { state: { title, location, price, image } });
+      // Kirim ID villa juga saat navigasi ke detail
+      navigate(`/villa-detail`, {
+        state: { id, title, location, price, image },
+      });
     }
   };
 
@@ -18,7 +23,7 @@ const VillaCard = ({ title, location, price, image, onBookNow }) => {
     <div className="col-md-4 d-flex">
       <div className="card villa-card border-0 shadow-sm rounded-4 flex-fill">
         <img
-          src={image}
+          src={image} // Image now comes directly as 'image' prop
           className="card-img-top rounded-top-4 villa-image"
           alt={title}
         />
@@ -35,7 +40,8 @@ const VillaCard = ({ title, location, price, image, onBookNow }) => {
 
           <p className="mb-1 small text-muted">Start From</p>
           <p className="fw-bold fs-6">
-            Rp. {price.toLocaleString("id-ID")} / Night
+            Rp. {parseFloat(price).toLocaleString("id-ID")} / Night{" "}
+            {/* Pastikan harga diformat */}
           </p>
 
           <button

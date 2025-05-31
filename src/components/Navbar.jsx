@@ -1,37 +1,38 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import logo from '../assets/logo-kamar-tamu.png'; 
+// src/components/Navbar.jsx
+import React from "react";
+import { Link } from "react-router-dom";
+import logo from "../assets/logo-kamar-tamu.png";
 
 const Navbar = () => (
   <nav
     className="navbar navbar-expand-lg navbar-light bg-lightblue"
     style={{
-      paddingTop: '1px',
-      paddingBottom: '1px',
-      minHeight: '40px',
+      paddingTop: "1px",
+      paddingBottom: "1px",
+      minHeight: "40px",
     }}
   >
     <div
       className="container"
-      style={{ alignItems: 'center', padding: '0', minHeight: '40px' }}
+      style={{ alignItems: "center", padding: "0", minHeight: "40px" }}
     >
       <Link
         className="navbar-brand fw-bold"
         to="/"
         style={{ padding: 0, margin: 0 }}
       >
-        <img src={logo} alt="Logo" style={{ height: '75px' }} />
+        <img src={logo} alt="Logo" style={{ height: "75px" }} />
       </Link>
       <div
         className="collapse navbar-collapse justify-content-center"
-        style={{ minHeight: '40px' }}
+        style={{ minHeight: "40px" }}
       >
         <ul
           className="navbar-nav mb-0 gap-5"
           style={{
-            alignItems: 'center',
-            lineHeight: '1',
-            fontSize: '15px',
+            alignItems: "center",
+            lineHeight: "1",
+            fontSize: "15px",
           }}
         >
           <li className="nav-item">
@@ -62,10 +63,14 @@ const Navbar = () => (
         </ul>
       </div>
       <div className="login">
+        {/* Karena NavbarProfile sudah menangani logic login/logout,
+            di Navbar ini kita hanya perlu menampilkan link LOGIN
+            jika ini memang navbar untuk halaman yang tidak memerlukan
+            status login user (seperti halaman landing default) */}
         <Link
           to="/login"
           className="nav-link fw-bold p-0"
-          style={{ fontSize: '14px' }}
+          style={{ fontSize: "14px" }}
         >
           LOGIN
         </Link>

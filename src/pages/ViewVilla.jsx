@@ -1,56 +1,80 @@
-import React from "react";
+// src/pages/ViewVilla.jsx
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import ViewVillaHeader from "../components/ViewVilla/ViewHeader";
 import VillaImages from "../components/ViewVilla/VillaImages";
 import VillaDetails from "../components/ViewVilla/VillaDetails";
 import "../styles/view-villa.css";
+import api from "../api/axios";
 
 const ViewVilla = () => {
-  const location = useLocation();
+  const location = useLocation(); // Ini adalah objek lokasi dari react-router-dom
   const navigate = useNavigate();
+  const [villa, setVilla] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const {
-    id,
-    title = "De Santika Nirwana",
-    location: loc = "Ubud, Bali",
-    price = 5000000,
-    image:
-      mainImage = "https://i.pinimg.com/736x/89/c1/df/89c1dfaf3e2bf035718cf2a76a16fd38.jpg",
-    images: additionalImages = [],
-    description = "Villa eksklusif dengan fasilitas premium...",
-    guests: guestCapacity = 6,
-    area: size = "24m²",
-    bedType = "One King Bed",
-    features = [
-      "TV",
-      "Free Wifi",
-      "Air Conditioner",
-      "Heater",
-      "Private Bathroom",
-    ],
-  } = location.state || {};
+  const villaId = location.state?.id;
 
-  const roomImagesForThumbnails = mainImage
-    ? additionalImages
-    : additionalImages.slice(1);
+  useEffect(() => {
+    if (!villaId) {
+      setError("ID Villa tidak ditemukan. Kembali ke halaman Owner.");
+      setLoading(false);
+      navigate("/owner-page");
+      return;
+    }
+
+    const fetchVillaDetails = async () => {
+      try {
+        const response = await api.get(`/villas/${villaId}`);
+        setVilla(response.data.data);
+      } catch (err) {
+        console.error("Error fetching villa details for view:", err);
+        setError(err.response?.data?.message || "Gagal memuat detail villa.");
+        navigate("/owner-page");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchVillaDetails();
+  }, [villaId, navigate]);
+
+  if (loading) {
+    return <div className="text-center my-5">Memuat detail villa...</div>;
+  }
+
+  if (error) {
+    return <div className="alert alert-danger text-center my-5">{error}</div>;
+  }
+
+  if (!villa) {
+    return <div className="text-center my-5">Detail villa tidak tersedia.</div>;
+  }
 
   const handleEdit = () => {
     navigate("/edit-villa", {
-      state: {
-        id,
-        title,
-        location: loc,
-        price,
-        image: mainImage,
-        images: additionalImages,
-        description,
-        guests: guestCapacity,
-        area: size,
-        bedType,
-        features,
-      },
+      state: { ...villa },
     });
   };
+
+  const {
+    name,
+    location: villaLocation, // <--- UBAH INI
+    pricePerNight,
+    mainImage,
+    description,
+    features,
+    guestCapacity,
+    size,
+    bedType,
+    additionalImages,
+  } = villa;
+
+  const allImages = mainImage
+    ? [mainImage, ...additionalImages]
+    : additionalImages;
+  const roomImagesForThumbnails =
+    allImages.length > 1 ? allImages.slice(1, 4) : [];
 
   return (
     <>
@@ -60,13 +84,13 @@ const ViewVilla = () => {
         <div className="row g-5">
           <VillaImages
             mainImage={mainImage}
-            title={title}
+            title={name}
             roomImages={roomImagesForThumbnails}
           />
           <VillaDetails
-            title={title}
-            location={loc}
-            price={price}
+            title={name}
+            location={villaLocation} // <--- UBAH PENGGUNAAN INI
+            price={pricePerNight}
             description={description}
             features={features}
             guestCapacity={guestCapacity}

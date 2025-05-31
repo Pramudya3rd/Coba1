@@ -1,39 +1,48 @@
+// src/components/AddVilla/AddVillaForm.jsx
 import React, { useState } from "react";
+import api from "../../api/axios";
+import { useNavigate } from "react-router-dom";
 
 const AddVillaForm = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     location: "",
     description: "",
     guestCapacity: "",
-    price: "",
+    pricePerNight: "",
     size: "",
     bedType: "",
-    mainImage: null,
-    additionalImages: [],
+    // mainImage dan additionalImages sekarang akan disimpan sebagai File objek untuk sementara
+    // sebelum dikirim via FormData
+    mainImageFile: null,
+    additionalImageFiles: [],
   });
 
   const [previewMainImage, setPreviewMainImage] = useState(null);
   const [previewAdditionalImages, setPreviewAdditionalImages] = useState([]);
   const [roomFeatures, setRoomFeatures] = useState([]);
   const [newFeature, setNewFeature] = useState("");
+  const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    if (name === "mainImage" && files.length > 0) {
+
+    if (name === "mainImage" && files && files.length > 0) {
       const file = files[0];
-      setFormData({ ...formData, mainImage: file });
-      setPreviewMainImage(URL.createObjectURL(file));
-    } else if (name === "additionalImages" && files.length > 0) {
+      setFormData((prev) => ({ ...prev, mainImageFile: file })); // Simpan File objek
+      setPreviewMainImage(URL.createObjectURL(file)); // Untuk preview
+    } else if (name === "additionalImages" && files) {
       const newFiles = Array.from(files);
       setFormData((prev) => ({
         ...prev,
-        additionalImages: [...prev.additionalImages, ...newFiles],
+        additionalImageFiles: [...prev.additionalImageFiles, ...newFiles], // Gabungkan File objek
       }));
       const newPreviews = newFiles.map((file) => URL.createObjectURL(file));
-      setPreviewAdditionalImages((prev) => [...prev, ...newPreviews]);
+      setPreviewAdditionalImages((prev) => [...prev, ...newPreviews]); // Untuk preview
     } else {
-      setFormData({ ...formData, [name]: value });
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
@@ -52,32 +61,75 @@ const AddVillaForm = () => {
     setRoomFeatures(roomFeatures.filter((f) => f !== feature));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const completeData = {
-      name: formData.name,
-      location: formData.location,
-      description: formData.description,
-      guestCapacity: parseInt(formData.guestCapacity),
-      price: parseFloat(formData.price),
-      size: formData.size,
-      bedType: formData.bedType,
-      mainImage: formData.mainImage ? "placeholder_main_image_url" : null, // Replace with actual upload logic
-      additionalImages: formData.additionalImages.map(
-        () => "placeholder_additional_image_url"
-      ), // Replace with actual upload logic
-      features: roomFeatures,
-    };
-    console.log("Data to submit:", completeData);
-    alert("Villa data uploaded!");
-    // In a real application, you would send completeData to your backend.
-    // For example, using fetch or axios. This would involve handling image uploads
-    // separately to get their URLs before sending the full villa data.
+    setMessage("");
+    setIsError(false);
+
+    if (
+      !formData.name ||
+      !formData.location ||
+      !formData.description ||
+      !formData.guestCapacity ||
+      !formData.pricePerNight
+    ) {
+      setMessage("Mohon lengkapi semua informasi dasar villa.");
+      setIsError(true);
+      return;
+    }
+    if (!formData.mainImageFile) {
+      // Validasi gambar utama wajib
+      setMessage("Gambar utama villa wajib diunggah.");
+      setIsError(true);
+      return;
+    }
+
+    try {
+      const data = new FormData(); // Gunakan FormData untuk mengirim file
+      data.append("name", formData.name);
+      data.append("location", formData.location);
+      data.append("description", formData.description);
+      data.append("guestCapacity", formData.guestCapacity);
+      data.append("pricePerNight", formData.pricePerNight);
+      data.append("size", formData.size);
+      data.append("bedType", formData.bedType);
+      data.append("features", JSON.stringify(roomFeatures)); // Kirim fitur sebagai string JSON
+
+      if (formData.mainImageFile) {
+        data.append("mainImage", formData.mainImageFile); // Tambahkan file gambar utama
+      }
+      formData.additionalImageFiles.forEach((file, index) => {
+        data.append(`additionalImages`, file); // Tambahkan file gambar tambahan
+      });
+
+      const response = await api.post("/villas", data, {
+        headers: {
+          "Content-Type": "multipart/form-data", // PENTING: Set header ini
+        },
+      });
+
+      console.log("Villa berhasil ditambahkan:", response.data);
+      setMessage(response.data.message || "Villa berhasil ditambahkan!");
+      setIsError(false);
+      alert(response.data.message);
+      navigate("/owner-page");
+    } catch (err) {
+      console.error("Error adding villa:", err.response?.data || err.message);
+      setMessage(
+        err.response?.data?.message ||
+          "Gagal menambahkan villa. Terjadi kesalahan."
+      );
+      setIsError(true);
+    }
   };
 
   return (
     <div className="add-villa-container">
-      <form onSubmit={handleSubmit} className="add-villa-form">
+      <form
+        onSubmit={handleSubmit}
+        className="add-villa-form"
+        encType="multipart/form-data"
+      >
         {/* UPLOAD SECTION */}
         <div className="upload-section">
           <label>UPLOAD IMAGES</label>
@@ -99,6 +151,7 @@ const AddVillaForm = () => {
               accept="image/*"
               onChange={handleChange}
               className="form-control"
+              required // Gambar utama wajib
             />
           </div>
 
@@ -144,6 +197,16 @@ const AddVillaForm = () => {
         {/* DETAILS SECTION */}
         <div className="details-section">
           <label>FILL YOUR DETAILS</label>
+          {message && (
+            <div
+              className={`alert mb-3 py-2 px-3 ${
+                isError ? "alert-danger" : "alert-success"
+              }`}
+              role="alert"
+            >
+              {message}
+            </div>
+          )}
           <input
             type="text"
             name="name"
@@ -178,9 +241,9 @@ const AddVillaForm = () => {
             />
             <input
               type="number"
-              name="price"
+              name="pricePerNight"
               placeholder="Price per night"
-              value={formData.price}
+              value={formData.pricePerNight}
               onChange={handleChange}
               required
             />
