@@ -1,0 +1,155 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.admin-wrapper {
+  display: flex;
+  height: 100vh;
+  background-color: #f4f9fd;
+}
+
+.sidebar {
+  width: 200px;
+  background-color: #C7D9E5;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 10px;
+  border-top-right-radius: 30px;
+  border-bottom-right-radius: 30px;
+  justify-content: flex-start; 
+  align-items: center;       
+  text-align: center;
+}
+
+
+.logo {
+  font-weight: bold;
+  font-size: 20px;
+  margin-bottom: 30px;
+}
+
+.sidebar-btn {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #999;
+  border-radius: 20px;
+  background-color: white;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.sidebar-btn:hover {
+  background-color: #2F4157; 
+  color: white;
+  border-color: #2F4157;
+}
+
+.sidebar-btn.active {
+  background-color: #2F4157;
+  color: white;
+  border-color: #2F4157;
+}
+
+.dropdown {
+  width: 100%;
+  background-color: transparent;
+  margin-bottom: 10px;
+}
+
+.dropdown div {
+  padding: 6px 14px;
+  cursor: pointer;
+  border-radius: 10px;
+  margin: 3px 0;
+  background-color: white;
+}
+
+.content-area {
+  flex: 1;
+  padding: 30px;
+}
+
+.header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 20px;
+  font-size: 18px;
+}
+
+.user-table {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.user-table h4 {
+  margin-bottom: 10px;
+}
+
+.user-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.user-table th, .user-table td {
+  border-bottom: 1px solid #ccc;
+  padding: 10px;
+  text-align: left;
+}
+
+.user-table tr {
+  border: 1px solid #eaeaea;
+  border-radius: 10px;
+}
+
+.user-table {
+  margin: 20px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.user-table h4 {
+  margin-bottom: 16px;
+  font-weight: bold;
+}
+
+.user-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.user-table th,
+.user-table td {
+  text-align: left;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.btn-approve {
+  background-color: #a6d3ff;
+  color: white;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 999px;
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+.btn-reject {
+  background-color: #f17b7b;
+  color: white;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.center-heading {
+  text-align: center;
+}

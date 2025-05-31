@@ -1,0 +1,87 @@
+// src/components/ListVilla.jsx
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import VillaCard from "./VillaCard";
+import "../styles/VillaCard.css";
+
+const ListVilla = () => {
+  const navigate = useNavigate();
+
+  const villas = [
+    {
+      id: 1, // Added ID
+      name: "De Santika Nirwana", // Changed from title
+      location: "Ubud, Bali",
+      price: "Rp. 5.000.000/Night",
+      image:
+        "https://i.pinimg.com/73x/89/c1/df/89c1dfaf3e2bf035718cf2a76a16fd38.jpg",
+      description: "Villa eksklusif dengan fasilitas premium...",
+      guests: 6,
+      size: "24m²",
+      bedType: "One King Bed",
+      features: [
+        "TV",
+        "Free Wifi",
+        "Air Conditioner",
+        "Heater",
+        "Private Bathroom",
+      ],
+      roomImages: [
+        "https://i.pinimg.com/73x/a8/bc/50/a8bc50298db283746524f3c82bbd9465.jpg",
+        "https://i.pinimg.com/73x/79/0b/56/790b56d61da6b4b2bd1301da3385b085.jpg",
+        "https://i.pinimg.com/73x/47/96/a1/4796a1d06f323c31fd2c7407c43788b9.jpg",
+      ],
+    },
+    {
+      id: 2, // Added ID
+      name: "Grand Lavanya Hills", // Changed from title
+      location: "Ubud, Bali",
+      price: "Rp. 8.500.000/Night",
+      image:
+        "https://i.pinimg.com/73x/b3/1d/ac/b31dac2e3bf41b30d84f5e454e293b13.jpg",
+      description: "Villa mewah dengan pemandangan bukit yang menakjubkan.",
+      guests: 8,
+      size: "30m²",
+      bedType: "Two King Beds",
+      features: ["TV", "Free Wifi", "Private Pool", "Kitchen"],
+      roomImages: [
+        "https://i.pinimg.com/73x/a8/bc/50/a8bc50298db283746524f3c82bbd9465.jpg",
+        "https://i.pinimg.com/73x/79/0b/56/790b56d61da6b4b2bd1301da3385b085.jpg",
+      ],
+    },
+    {
+      id: 3, // Added ID
+      name: "Samudra Biru Tropika", // Changed from title
+      location: "Ubud, Bali",
+      price: "Rp. 4.500.000/Night",
+      image:
+        "http://i.pinimg.com/73x/28/a8/8d/28a88d79127329f7f6cb7be2a18ad2f0.jpg",
+      description: "Nikmati ketenangan di villa dekat pantai.",
+      guests: 4,
+      size: "20m²",
+      bedType: "One Queen Bed",
+      features: ["TV", "Free Wifi"],
+      roomImages: [
+        "https://i.pinimg.com/73x/47/96/a1/4796a1d06f323c31fd2c7407c43788b9.jpg",
+      ],
+    },
+  ];
+
+  return (
+    <section className="container pb-5">
+      <h2 className="section-title">Our Villa</h2>
+      <p className="section-subtitle">Happy Holiday, Enjoy Your Staycation</p>
+      <div className="row g-4 justify-content-center">
+        {villas.map((villa, index) => (
+          <VillaCard
+            key={index}
+            {...villa} // Pass all villa properties directly
+            onBookNow={() => navigate("/villa-detail", { state: villa })} // Pass the entire villa object
+          />
+        ))}
+      </div>
+    </section>
+  );
+};
+
+export default ListVilla;

@@ -1,0 +1,267 @@
+.owner-page {
+  background-color: #e6eef5;
+  min-height: 100vh;
+  display: flex;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 14px; 
+}
+
+.owner-sidebar {
+  width: 200px;
+  background-color: #fff;
+  padding: 20px 20px 40px 20px; 
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: #2c3e50;
+}
+
+.owner-sidebar .logo {
+  font-size: 16px; 
+  font-weight: bold;
+  margin-bottom: 20px; 
+}
+
+.owner-sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.owner-sidebar li {
+  margin-bottom: 16px; 
+  color: #2c3e50;
+  cursor: pointer;
+  padding: 0;
+  border-radius: 0;
+  text-align: left;
+  font-weight: bold;
+  transition: color 0.3s ease;
+  font-size: 14px; 
+}
+
+.owner-sidebar li:hover {
+  color: #3498db;
+}
+
+.owner-sidebar li.active {
+  color: #3498db;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px; 
+  background-color: #f4f9fc;
+  font-size: 14px; 
+}
+
+.header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 16px; 
+  font-size: 14px;
+}
+
+.owner-name {
+  margin-right: 12px;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 20px;
+  font-size: 18px;
+  position: relative; 
+  padding-right: 20px;
+}
+
+.profile-icon {
+  font-size: 24px;
+  cursor: pointer;
+  user-select: none;
+  padding: 6px;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.profile-icon:hover {
+  background-color: #ddd;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 40px;  
+  right: 20px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  padding: 10px 0;
+  z-index: 100;
+  min-width: 100px;
+}
+
+.dropdown-item {
+  padding: 8px 16px;
+  cursor: pointer;
+  color: #2c3e50; /* default warna teks */
+  font-weight: normal;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  transition: background-color 0.3s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #f1f1f1;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+  background-color: #f4f9fc;
+  font-size: 14px;
+}
+
+.villa-section {
+  background: #fff;
+  padding: 16px;  
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.add-villa-btn {
+  background-color: #577C8E;
+  color: white;
+  border: none;
+  padding: 6px 12px; 
+  border-radius: 12px;
+  font-weight: bold;
+  margin-bottom: 12px; 
+  cursor: pointer;
+  font-size: 14px; 
+  transition: background-color 0.3s ease;
+}
+
+.add-villa-btn:hover {
+  background-color: #5b7180;
+}
+
+.villa-table {
+  width: 100%;
+  border-collapse: collapse;
+  overflow-x: auto;
+}
+
+.villa-table th,
+.villa-table td {
+  padding: 12px; 
+  color: #4a4a4a;
+  text-align: center;
+  border-bottom: 1px solid #e0e0e0;
+  background: white;
+  font-size: 14px; 
+}
+
+.villa-table th {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.villa-row .action-buttons button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  margin: 0 6px;
+  padding: 6px 8px;
+  font-size: 18px;
+  color: #555;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.villa-row .action-buttons button:focus {
+  outline: none;
+  color: #577C8E;
+}
+
+.villa-row .action-buttons button[title="Delete"]:hover {
+  color: #e74c3c;
+}
+
+.villa-row .action-buttons button[title="Edit"]:hover {
+  color: #94DC9C; 
+}
+
+.villa-row .action-buttons button[title="View"]:hover {
+  color: #53A9D3; 
+}
+
+.booking-section {
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-top: 20px;
+}
+
+.booking-section h3 {
+  font-size: 20px;
+  margin-bottom: 15px;
+  font-weight: 600;
+  color: #333;
+}
+
+.booking-section table {
+  width: 100%;
+  border-collapse: collapse; 
+  font-size: 14px;
+}
+
+.booking-section th,
+.booking-section td {
+  border-bottom: 1px solid #e0e0e0; 
+  border-left: none;
+  border-right: none;
+  padding: 12px 10px;
+  text-align: center; 
+  background-color: #fff;
+}
+
+.booking-section th {
+  background-color: #ffffff;
+  font-weight: 600;
+}
+
+.booking-section tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+@media (max-width: 768px) {
+  .owner-page {
+    flex-direction: column;
+  }
+
+  .owner-sidebar {
+    width: 100%;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+    padding: 10px 20px; 
+  }
+
+  .main-content {
+    padding: 15px; 
+  }
+
+  .villa-table th,
+  .villa-table td {
+    font-size: 12px;
+    padding: 8px;
+  }
+}
