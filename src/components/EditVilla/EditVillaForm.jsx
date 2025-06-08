@@ -2,6 +2,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/axios";
+import { FaTimesCircle } from "react-icons/fa"; // Import icon silang
+
+// Get the base URL for static assets from the environment variable
+const backendBaseUrl = import.meta.env.VITE_API_BASE_URL.replace("/api", "");
 
 const EditVillaForm = ({ villaData }) => {
   const navigate = useNavigate();
@@ -13,16 +17,14 @@ const EditVillaForm = ({ villaData }) => {
     pricePerNight: "",
     size: "",
     bedType: "",
-    // mainImage dan additionalImages sekarang akan disimpan sebagai URL string yang ada dari DB
-    // mainImageFile dan additionalImageFiles untuk file baru yang diupload
-    mainImage: "",
-    additionalImages: [],
-    mainImageFile: null, // Untuk file baru yang diunggah
-    additionalImageFiles: [], // Untuk file baru yang diunggah
+    mainImage: "", // This will still hold the relative path string for main image
+    mainImageFile: null, // This will hold the File object for a new main image
   });
 
+  // State baru untuk mengelola semua gambar tambahan (URL lama dan file baru)
+  const [additionalImagesData, setAdditionalImagesData] = useState([]);
   const [previewMainImage, setPreviewMainImage] = useState(null);
-  const [previewAdditionalImages, setPreviewAdditionalImages] = useState([]);
+
   const [roomFeatures, setRoomFeatures] = useState([]);
   const [newFeature, setNewFeature] = useState("");
   const [message, setMessage] = useState("");
@@ -31,6 +33,24 @@ const EditVillaForm = ({ villaData }) => {
   // Gunakan useEffect untuk mengisi form saat villaData props berubah
   useEffect(() => {
     if (villaData) {
+      console.log("EditVillaForm: Received villaData:", villaData);
+
+      // Pastikan additionalImages adalah array. Jika string, coba parse JSON.
+      const ensuredAdditionalImages = Array.isArray(villaData.additionalImages)
+        ? villaData.additionalImages
+        : typeof villaData.additionalImages === "string" &&
+          villaData.additionalImages.trim() !== ""
+        ? JSON.parse(villaData.additionalImages)
+        : [];
+
+      // Pastikan features adalah array. Jika string, coba parse JSON.
+      const ensuredFeatures = Array.isArray(villaData.features)
+        ? villaData.features
+        : typeof villaData.features === "string" &&
+          villaData.features.trim() !== ""
+        ? JSON.parse(villaData.features)
+        : [];
+
       setFormData({
         name: villaData.name || "",
         location: villaData.location || "",
@@ -39,15 +59,34 @@ const EditVillaForm = ({ villaData }) => {
         pricePerNight: villaData.pricePerNight || "",
         size: villaData.size || "",
         bedType: villaData.bedType || "",
-        mainImage: villaData.mainImage || "", // URL gambar lama dari DB
-        additionalImages: villaData.additionalImages || [], // URL gambar lama dari DB
-        mainImageFile: null, // Reset file baru
-        additionalImageFiles: [], // Reset file baru
+        mainImage: villaData.mainImage || "", // Keep original relative path
+        mainImageFile: null, // No new file initially
       });
-      setRoomFeatures(villaData.features || []);
-      // Set preview dari URL gambar yang ada atau yang baru diunggah
-      setPreviewMainImage(villaData.mainImage || null);
-      setPreviewAdditionalImages(villaData.additionalImages || []);
+      setRoomFeatures(ensuredFeatures);
+
+      // Inisialisasi additionalImagesData dengan gambar yang sudah ada
+      const initialAdditionalImages = ensuredAdditionalImages.map((imgUrl) => ({
+        id: imgUrl, // Use URL as unique ID for existing images
+        type: "url",
+        value: imgUrl, // Store relative path
+        preview: `${backendBaseUrl}${imgUrl}`, // Full URL for display
+      }));
+      setAdditionalImagesData(initialAdditionalImages);
+
+      // Set preview untuk mainImage
+      const newPreviewMainImage = villaData.mainImage
+        ? `${backendBaseUrl}${villaData.mainImage}`
+        : null;
+      setPreviewMainImage(newPreviewMainImage);
+
+      console.log(
+        "EditVillaForm: Constructed mainImage URL:",
+        newPreviewMainImage
+      );
+      console.log(
+        "EditVillaForm: Initial additionalImagesData:",
+        initialAdditionalImages
+      );
     }
   }, [villaData]);
 
@@ -56,17 +95,17 @@ const EditVillaForm = ({ villaData }) => {
 
     if (name === "mainImage" && files && files.length > 0) {
       const file = files[0];
-      setFormData((prev) => ({ ...prev, mainImageFile: file, mainImage: "" })); // Hapus URL lama jika ada file baru
-      setPreviewMainImage(URL.createObjectURL(file));
+      setFormData((prev) => ({ ...prev, mainImageFile: file, mainImage: "" })); // Clear old URL if new file
+      setPreviewMainImage(URL.createObjectURL(file)); // For new file, use createObjectURL
     } else if (name === "additionalImages" && files) {
       const newFiles = Array.from(files);
-      setFormData((prev) => ({
-        ...prev,
-        additionalImageFiles: [...prev.additionalImageFiles, ...newFiles], // Gabungkan File objek baru
-        additionalImages: prev.additionalImages, // Pertahankan URL lama
+      const newImageObjects = newFiles.map((file) => ({
+        id: URL.createObjectURL(file), // Use blob URL as ID for new files
+        type: "file",
+        value: file, // Store File object
+        preview: URL.createObjectURL(file), // For new file, use createObjectURL
       }));
-      const newPreviews = newFiles.map((file) => URL.createObjectURL(file));
-      setPreviewAdditionalImages((prev) => [...prev, ...newPreviews]);
+      setAdditionalImagesData((prev) => [...prev, ...newImageObjects]);
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
@@ -85,6 +124,13 @@ const EditVillaForm = ({ villaData }) => {
 
   const removeFeature = (feature) => {
     setRoomFeatures(roomFeatures.filter((f) => f !== feature));
+  };
+
+  // Fungsi untuk menghapus gambar tambahan
+  const removeAdditionalImage = (idToRemove) => {
+    setAdditionalImagesData((prevImages) =>
+      prevImages.filter((img) => img.id !== idToRemove)
+    );
   };
 
   const handleSubmit = async (e) => {
@@ -115,33 +161,17 @@ const EditVillaForm = ({ villaData }) => {
       data.append("bedType", formData.bedType);
       data.append("features", JSON.stringify(roomFeatures));
 
-      // Hanya append file baru jika ada
+      // Append main image (either new file or old URL)
       if (formData.mainImageFile) {
         data.append("mainImage", formData.mainImageFile);
       } else if (formData.mainImage) {
-        // Jika tidak ada file baru tapi ada URL lama, kirim URL lama
         data.append("mainImage", formData.mainImage);
       }
 
-      // Append file tambahan baru
-      formData.additionalImageFiles.forEach((file, index) => {
-        data.append(`additionalImages`, file);
+      // Append additional images based on their type
+      additionalImagesData.forEach((img) => {
+        data.append("additionalImages", img.value); // img.value will be either relative path (string) or File object
       });
-      // Append URL gambar tambahan lama (jika ada dan tidak diganti dengan file baru)
-      formData.additionalImages.forEach((url, index) => {
-        if (
-          !formData.additionalImageFiles.some(
-            (file) => URL.createObjectURL(file) === url
-          )
-        ) {
-          // Cek jika bukan preview dari file baru
-          data.append(`additionalImages`, url);
-        }
-      });
-      // NOTE: Logika di atas untuk additionalImages mungkin perlu penyesuaian lebih lanjut
-      // tergantung bagaimana Anda ingin menangani penambahan/penghapusan gambar tambahan di UI.
-      // Saat ini, file baru akan ditambahkan, dan URL lama juga akan dikirim ulang.
-      // Jika ingin hapus gambar lama, UI perlu punya tombol hapus gambar tambahan.
 
       const response = await api.put(`/villas/${villaData.id}`, data, {
         headers: {
@@ -210,9 +240,9 @@ const EditVillaForm = ({ villaData }) => {
             />
             <div className="d-flex flex-wrap mt-2 gap-2">
               {/* Tampilkan preview gambar yang sudah ada dan yang baru diunggah */}
-              {previewAdditionalImages.map((preview, index) => (
+              {additionalImagesData.map((img, index) => (
                 <div
-                  key={index}
+                  key={img.id} // Gunakan ID unik dari objek gambar
                   style={{
                     width: "100px",
                     height: "100px",
@@ -220,7 +250,7 @@ const EditVillaForm = ({ villaData }) => {
                   }}
                 >
                   <img
-                    src={preview}
+                    src={img.preview} // Gunakan URL preview
                     alt={`Additional ${index}`}
                     style={{
                       width: "100%",
@@ -229,6 +259,31 @@ const EditVillaForm = ({ villaData }) => {
                       borderRadius: "8px",
                     }}
                   />
+                  <button
+                    type="button"
+                    onClick={() => removeAdditionalImage(img.id)}
+                    style={{
+                      position: "absolute",
+                      top: "-8px",
+                      right: "-8px",
+                      background: "rgba(0, 0, 0, 0.5)", // Warna latar belakang semi-transparan hitam
+                      color: "white",
+                      borderRadius: "50%",
+                      border: "none",
+                      width: "24px",
+                      height: "24px",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      cursor: "pointer",
+                      fontSize: "12px",
+                      padding: 0,
+                      zIndex: 10,
+                    }}
+                    title="Remove image"
+                  >
+                    <FaTimesCircle />
+                  </button>
                 </div>
               ))}
             </div>

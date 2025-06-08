@@ -1,11 +1,11 @@
 import React from "react";
-import Navbar from "../components/Navbar";
-import ErrorPage from "../components/Error"; 
+import NavbarProfile from "../components/NavbarProfile"; // Ubah import
+import ErrorPage from "../components/Error";
 
 const NotFoundPage = () => {
   return (
     <>
-      <Navbar />
+      <NavbarProfile /> {/* Ubah penggunaan */}
       <ErrorPage
         code="404"
         title="Page Not Found"

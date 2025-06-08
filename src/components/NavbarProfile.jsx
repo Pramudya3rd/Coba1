@@ -1,4 +1,3 @@
-// src/components/NavbarProfile.jsx
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
@@ -11,17 +10,27 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
 
-  // Dapatkan info user dari localStorage saat komponen dimuat
   useEffect(() => {
+    const token = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (e) {
-        console.error("Failed to parse user from localStorage", e);
-        localStorage.removeItem("user"); // Hapus jika corrupted
-        localStorage.removeItem("token");
-      }
+
+    // Clear data if either token or user is missing
+    if (!token || !storedUser) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      setUser(null);
+      return;
+    }
+
+    try {
+      const parsedUser = JSON.parse(storedUser);
+      // Optional: Add token validation here
+      setUser(parsedUser);
+    } catch (e) {
+      console.error("Failed to parse user data", e);
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      setUser(null);
     }
   }, []);
 
@@ -45,9 +54,6 @@ const Navbar = () => {
     setShowDropdown(false);
     navigate("/");
   };
-
-  // Hapus seluruh blok fungsi handleProfileClick di sini
-  // Karena logikanya sudah dipindahkan ke dalam JSX dan tombol/link di dropdown.
 
   return (
     <nav
@@ -108,25 +114,22 @@ const Navbar = () => {
           </ul>
         </div>
 
-        {/* Profile Icon & Dropdown */}
         <div
           className="profile-icon position-relative d-flex align-items-center"
           ref={dropdownRef}
         >
           {user ? (
-            // Jika user sudah login
             <>
               <FaUserCircle
                 size={28}
                 className="text-dark cursor-pointer"
-                onClick={toggleDropdown} // Tetap toggle dropdown
+                onClick={toggleDropdown}
               />
               {showDropdown && (
                 <div
                   className="dropdown-menu show position-absolute end-0 mt-2 shadow bg-white rounded py-2"
                   style={{ zIndex: 1000 }}
                 >
-                  {/* Tampilkan link Profile/Dashboard berdasarkan role */}
                   {user.role === "admin" && (
                     <Link className="dropdown-item px-4 py-2" to="/admin-page">
                       Dashboard Admin
@@ -152,7 +155,6 @@ const Navbar = () => {
               )}
             </>
           ) : (
-            // Jika user belum login, tampilkan tombol login
             <Link
               to="/login"
               className="nav-link fw-bold p-0"

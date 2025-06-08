@@ -7,8 +7,11 @@ import VillaDetails from "../components/ViewVilla/VillaDetails";
 import "../styles/view-villa.css";
 import api from "../api/axios";
 
+// Get the base URL for static assets from the environment variable
+const backendBaseUrl = import.meta.env.VITE_API_BASE_URL.replace("/api", "");
+
 const ViewVilla = () => {
-  const location = useLocation(); // Ini adalah objek lokasi dari react-router-dom
+  const location = useLocation();
   const navigate = useNavigate();
   const [villa, setVilla] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -17,21 +20,43 @@ const ViewVilla = () => {
   const villaId = location.state?.id;
 
   useEffect(() => {
+    console.log("ViewVilla Page: Received villaId from state:", villaId);
+
     if (!villaId) {
-      setError("ID Villa tidak ditemukan. Kembali ke halaman Owner.");
+      console.error("ViewVilla Page Error: villaId is undefined or null.");
+      setError(
+        "ID Villa tidak ditemukan. Mengarahkan kembali ke halaman Owner..."
+      );
       setLoading(false);
-      navigate("/owner-page");
+      setTimeout(() => {
+        navigate("/owner-page");
+      }, 2000);
       return;
     }
 
     const fetchVillaDetails = async () => {
       try {
+        console.log(
+          `ViewVilla Page: Attempting to fetch villa details for ID: ${villaId}`
+        );
         const response = await api.get(`/villas/${villaId}`);
+        console.log(
+          "ViewVilla Page: Successfully fetched villa data:",
+          response.data.data
+        );
         setVilla(response.data.data);
       } catch (err) {
-        console.error("Error fetching villa details for view:", err);
-        setError(err.response?.data?.message || "Gagal memuat detail villa.");
-        navigate("/owner-page");
+        console.error(
+          "ViewVilla Page Error fetching villa details:",
+          err.response?.data || err.message
+        );
+        setError(
+          err.response?.data?.message ||
+            "Gagal memuat detail villa. Pastikan ID villa valid dan server berjalan."
+        );
+        setTimeout(() => {
+          navigate("/owner-page");
+        }, 3000);
       } finally {
         setLoading(false);
       }
@@ -40,11 +65,25 @@ const ViewVilla = () => {
   }, [villaId, navigate]);
 
   if (loading) {
-    return <div className="text-center my-5">Memuat detail villa...</div>;
+    return (
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ minHeight: "80vh" }}
+      >
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Memuat detail villa...</span>
+        </div>
+        <p className="ms-3">Memuat detail villa...</p>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="alert alert-danger text-center my-5">{error}</div>;
+    return (
+      <div className="alert alert-danger text-center my-5" role="alert">
+        {error}
+      </div>
+    );
   }
 
   if (!villa) {
@@ -53,13 +92,13 @@ const ViewVilla = () => {
 
   const handleEdit = () => {
     navigate("/edit-villa", {
-      state: { ...villa },
+      state: { id: villa.id },
     });
   };
 
   const {
     name,
-    location: villaLocation, // <--- UBAH INI
+    location: villaLocation,
     pricePerNight,
     mainImage,
     description,
@@ -70,9 +109,14 @@ const ViewVilla = () => {
     additionalImages,
   } = villa;
 
+  // Pastikan additionalImages adalah array sebelum digunakan
+  const ensuredAdditionalImages = Array.isArray(additionalImages)
+    ? additionalImages
+    : [];
+
   const allImages = mainImage
-    ? [mainImage, ...additionalImages]
-    : additionalImages;
+    ? [mainImage, ...ensuredAdditionalImages]
+    : ensuredAdditionalImages;
   const roomImagesForThumbnails =
     allImages.length > 1 ? allImages.slice(1, 4) : [];
 
@@ -83,16 +127,18 @@ const ViewVilla = () => {
       <div className="container py-5">
         <div className="row g-5">
           <VillaImages
-            mainImage={mainImage}
+            mainImage={mainImage ? `${backendBaseUrl}${mainImage}` : ""}
             title={name}
-            roomImages={roomImagesForThumbnails}
+            roomImages={roomImagesForThumbnails.map(
+              (imgUrl) => `${backendBaseUrl}${imgUrl}`
+            )}
           />
           <VillaDetails
             title={name}
-            location={villaLocation} // <--- UBAH PENGGUNAAN INI
+            location={villaLocation}
             price={pricePerNight}
             description={description}
-            features={features}
+            features={Array.isArray(features) ? features : []}
             guestCapacity={guestCapacity}
             size={size}
             bedType={bedType}

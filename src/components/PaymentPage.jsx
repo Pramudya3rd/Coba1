@@ -1,5 +1,5 @@
 // src/components/PaymentPage.jsx
-import React, { useState, useEffect } from "react"; // Import useState, useEffect
+import React, { useState, useEffect } from "react";
 import "../styles/Payment.css";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
@@ -11,17 +11,17 @@ import {
   FaUserFriends,
   FaLayerGroup,
 } from "react-icons/fa";
+import { BACKEND_URL } from "../api/axios";
 
 const PaymentPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [bookingData, setBookingData] = useState(null); // State untuk data booking
-  const [villaDetails, setVillaDetails] = useState(null); // State untuk detail villa
+  const [bookingData, setBookingData] = useState(null);
+  const [villaDetails, setVillaDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Ambil data booking dan villa dari location.state
     const { booking, villa } = location.state || {};
     if (booking && villa) {
       setBookingData(booking);
@@ -32,14 +32,10 @@ const PaymentPage = () => {
         "Data pemesanan tidak ditemukan. Silakan kembali ke halaman booking."
       );
       setLoading(false);
-      // Opsi: Arahkan kembali ke halaman booking jika data tidak ada
-      // navigate('/booking');
     }
   }, [location.state, navigate]);
 
   const handlePayment = () => {
-    // Logika untuk mengirim bukti pembayaran akan ada di halaman Confirmation
-    // Untuk saat ini, kita hanya meneruskan data ke halaman Confirmation
     navigate("/confirmation", {
       state: { booking: bookingData, villa: villaDetails },
     });
@@ -67,7 +63,7 @@ const PaymentPage = () => {
     checkInDate,
     checkOutDate,
     totalPrice,
-    user: bookingUser, // Info user dari booking jika sudah ada di backend
+    user: bookingUser,
   } = bookingData;
 
   const {
@@ -95,7 +91,6 @@ const PaymentPage = () => {
   const formattedPricePerNight =
     parseFloat(pricePerNight).toLocaleString("id-ID");
 
-  // Ambil user info dari localStorage jika bookingUser tidak ada
   const currentUser = bookingUser || JSON.parse(localStorage.getItem("user"));
   const firstName = currentUser?.name?.split(" ")[0] || "";
   const lastName = currentUser?.name?.split(" ").slice(1).join(" ") || "";
@@ -104,9 +99,12 @@ const PaymentPage = () => {
 
   return (
     <div className="villa-booking-container">
-      {/* Villa Card */}
       <div className="villa-card">
-        <img src={mainImage} alt={villaName} className="villa-image" />
+        <img
+          src={`${BACKEND_URL}${mainImage}`}
+          alt={villaName}
+          className="villa-image"
+        />
         <div className="villa-content">
           <p className="villa-tagline">THE CHOICE OF FAMILIES</p>
           <h5 className="villa-title">{villaName}</h5>
@@ -137,7 +135,6 @@ const PaymentPage = () => {
         </div>
       </div>
 
-      {/* Summary Card */}
       <div className="reservation-summary">
         <h5 className="form-title">RESERVATION SUMMARY</h5>
 
@@ -187,14 +184,13 @@ const PaymentPage = () => {
           </div>
         </div>
 
-        {/* Contact Section as Card */}
         <div className="upload-section">
           <p>
             <strong>CONTACT VILLA</strong>
           </p>
           <div className="contact-card">
             <a
-              href={`https://wa.me/${villaDetails.owner?.phone}`} // Ambil nomor telepon owner dari villa details
+              href={`https://wa.me/${villaDetails.owner?.phone}`}
               target="_blank"
               rel="noopener noreferrer"
             >

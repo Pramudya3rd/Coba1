@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import "../styles/Confirmation.css";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FaCloudUploadAlt } from "react-icons/fa";
-import api from "../api/axios";
+import api, { BACKEND_URL } from "../api/axios";
 
 const Confirmation = () => {
   const navigate = useNavigate();
@@ -60,10 +60,9 @@ const Confirmation = () => {
       return;
     }
 
-    // --- Logika Upload File Bukti Pembayaran ---
     const formData = new FormData();
-    formData.append("status", "pending"); // Kirim status booking (bisa juga 'waiting_for_payment_proof')
-    formData.append("paymentProof", paymentProofFile); // <-- TAMBAHKAN FILE KE FORMDATA
+    formData.append("status", "pending"); // Ini status yang dikirim saat upload bukti bayar
+    formData.append("paymentProof", paymentProofFile);
 
     try {
       const response = await api.put(
@@ -71,7 +70,7 @@ const Confirmation = () => {
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data", // <-- PENTING: SET HEADER INI
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -123,9 +122,12 @@ const Confirmation = () => {
 
   return (
     <div className="villa-booking-container">
-      {/* Villa Card */}
       <div className="villa-card">
-        <img src={mainImage} alt={villaName} className="villa-image" />
+        <img
+          src={`${BACKEND_URL}${mainImage}`}
+          alt={villaName}
+          className="villa-image"
+        />
         <div className="villa-content">
           <p className="villa-tagline">THE CHOICE OF FAMILIES</p>
           <h5 className="villa-title">{villaName}</h5>
@@ -136,7 +138,6 @@ const Confirmation = () => {
         </div>
       </div>
 
-      {/* Reservation Summary */}
       <div className="reservation-summary">
         <h5 className="form-title">RESERVATION SUMMARY</h5>
         {message && (

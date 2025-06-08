@@ -1,15 +1,15 @@
 import React from "react";
-import Navbar from "../components/Navbar";
-import ErrorPage from "../components/Error"; 
+import NavbarProfile from "../components/NavbarProfile"; // Ubah import
+import ErrorPage from "../components/Error";
 
 const ForbiddenPage = () => {
   return (
     <>
-      <Navbar />
+      <NavbarProfile /> {/* Ubah penggunaan */}
       <ErrorPage
         code="403"
         title="Access Forbidden"
-        description="ou don’t have permission to access this page."
+        description="You don’t have permission to access this page."
       />
     </>
   );

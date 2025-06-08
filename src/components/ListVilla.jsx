@@ -1,21 +1,24 @@
 // src/components/ListVilla.jsx
-import React, { useState, useEffect } from "react"; // Import useState dan useEffect
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import VillaCard from "./VillaCard";
 import "../styles/VillaCard.css";
-import api from "../api/axios"; // Import instance axios
+import api from "../api/axios";
+
+// Get the base URL for static assets from the environment variable
+const backendBaseUrl = import.meta.env.VITE_API_BASE_URL.replace("/api", "");
 
 const ListVilla = () => {
   const navigate = useNavigate();
-  const [villas, setVillas] = useState([]); // State untuk menyimpan daftar villa
-  const [loading, setLoading] = useState(true); // State untuk loading
-  const [error, setError] = useState(null); // State untuk error
+  const [villas, setVillas] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchVillas = async () => {
       try {
-        const response = await api.get("/villas"); // Mengambil data villa dari backend
-        setVillas(response.data.data); // Asumsi data villa ada di response.data.data
+        const response = await api.get("/villas");
+        setVillas(response.data.data);
       } catch (err) {
         console.error("Error fetching villas:", err);
         setError("Gagal memuat daftar villa.");
@@ -24,7 +27,7 @@ const ListVilla = () => {
       }
     };
     fetchVillas();
-  }, []); // Array dependensi kosong agar hanya berjalan sekali saat mount
+  }, []);
 
   if (loading) {
     return <div className="text-center my-5">Memuat villa...</div>;
@@ -49,13 +52,14 @@ const ListVilla = () => {
       <div className="row g-4 justify-content-center">
         {villas.map((villa) => (
           <VillaCard
-            key={villa.id} // Gunakan ID unik dari backend
-            id={villa.id} // Teruskan ID
-            title={villa.name} // Sesuaikan dengan nama properti dari backend
+            key={villa.id}
+            id={villa.id}
+            title={villa.name}
             location={villa.location}
-            price={villa.pricePerNight} // Sesuaikan dengan nama properti dari backend
-            image={villa.mainImage} // Sesuaikan dengan nama properti dari backend
-            onBookNow={() => navigate("/villa-detail", { state: { ...villa } })}
+            price={villa.pricePerNight}
+            image={villa.mainImage}
+            // Hapus sepenuhnya baris onBookNow={...} di sini
+            // onBookNow={() => navigate("/villa-detail", { state: { ...villa } })} <-- PASTIKAN BARIS INI TIDAK ADA
           />
         ))}
       </div>

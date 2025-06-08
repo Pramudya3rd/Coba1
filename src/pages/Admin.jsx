@@ -1,70 +1,92 @@
-// src/pages/Admin.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/SidebarAdmin";
 import VillaCard from "../components/VillaCard";
 import "../styles/SideBar.css";
-import api from "../api/axios"; // Import axios
+import "../styles/admin.css";
+import api from "../api/axios";
+import { FaRegEye } from "react-icons/fa";
 
 const Admin = () => {
   const [activeMenu, setActiveMenu] = useState("dashboard");
   const navigate = useNavigate();
 
   const [users, setUsers] = useState([]);
-  const [owners, setOwners] = useState([]); // Owners adalah user dengan role 'owner'
-  const [villasToUpdate, setVillasToUpdate] = useState([]); // Villa dengan status pending/rejected
-  const [allVillas, setAllVillas] = useState([]); // Semua villa untuk daftar umum
+  const [owners, setOwners] = useState([]);
+  const [villasToUpdate, setVillasToUpdate] = useState([]);
+  const [allVillas, setAllVillas] = useState([]);
   const [bookings, setBookings] = useState([]);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchData = async (endpoint, setter) => {
+  const fetchData = async (endpoint, setter, filterFn = null) => {
     setLoading(true);
     setError(null);
     try {
       const response = await api.get(endpoint);
-      setter(response.data.data);
+      if (filterFn) {
+        setter(response.data.data.filter(filterFn));
+      } else {
+        setter(response.data.data);
+      }
     } catch (err) {
       console.error(`Error fetching data from ${endpoint}:`, err);
       setError(`Gagal memuat data dari ${endpoint}.`);
-      setter([]); // Kosongkan data jika gagal
+      setter([]);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
+    setLoading(true); // Set loading true for all fetches
     if (activeMenu === "user") {
-      fetchData("/users", setUsers);
+      fetchData("/users", setUsers, (user) => user.role === "user");
     } else if (activeMenu === "owner") {
-      // Filter owners dari semua user, atau jika ada endpoint khusus
-      fetchData("/users", (data) => {
-        setOwners(data.filter((user) => user.role === "owner"));
-      });
+      // Fetch owners and all villas simultaneously
+      Promise.all([
+        api
+          .get("/users")
+          .then((res) => res.data.data.filter((user) => user.role === "owner")),
+        api.get("/villas").then((res) => res.data.data),
+      ])
+        .then(([ownerData, villaData]) => {
+          setOwners(ownerData);
+          setAllVillas(villaData); // Store all villas to link with owners
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error("Error fetching owner or villa data:", err);
+          setError("Gagal memuat data owner atau villa.");
+          setOwners([]);
+          setAllVillas([]);
+          setLoading(false);
+        });
     } else if (activeMenu === "updateVilla") {
-      // Admin melihat semua villa, dan kita bisa filter di frontend untuk status pending/rejected
-      fetchData("/villas", (data) => {
-        setVillasToUpdate(data.filter((villa) => villa.status !== "verified"));
-      });
+      fetchData(
+        "/villas",
+        setVillasToUpdate,
+        (villa) => villa.status !== "verified"
+      );
     } else if (activeMenu === "villaList") {
-      // Admin melihat semua villa
       fetchData("/villas", setAllVillas);
     } else if (activeMenu === "booking") {
       fetchData("/bookings", setBookings);
+    } else {
+      setLoading(false); // If no specific menu is active, ensure loading is false
     }
-  }, [activeMenu]); // Tambahkan dependensi activeMenu
+  }, [activeMenu]);
 
-  // Fungsi untuk mengubah status villa (Approve/Reject)
   const handleUpdateVillaStatus = async (villaId, newStatus) => {
     try {
       await api.put(`/villas/${villaId}/status`, { status: newStatus });
       alert(`Status villa berhasil diubah menjadi ${newStatus}.`);
-      // Refresh daftar villa yang perlu diupdate
-      fetchData("/villas", (data) => {
-        setVillasToUpdate(data.filter((villa) => villa.status !== "verified"));
-      });
-      // Refresh daftar semua villa juga, jika relevan
+      fetchData(
+        "/villas",
+        setVillasToUpdate,
+        (villa) => villa.status !== "verified"
+      );
       fetchData("/villas", setAllVillas);
     } catch (err) {
       console.error(
@@ -79,12 +101,11 @@ const Admin = () => {
     }
   };
 
-  // Fungsi untuk mengubah status booking (Konfirmasi/Batal/Selesai)
   const handleUpdateBookingStatus = async (bookingId, newStatus) => {
     try {
       await api.put(`/bookings/${bookingId}/status`, { status: newStatus });
       alert(`Status booking berhasil diubah menjadi ${newStatus}.`);
-      fetchData("/bookings", setBookings); // Refresh daftar booking
+      fetchData("/bookings", setBookings);
     } catch (err) {
       console.error(
         "Error updating booking status:",
@@ -96,6 +117,10 @@ const Admin = () => {
         }`
       );
     }
+  };
+
+  const handleViewVilla = (villaId) => {
+    navigate(`/view-villa`, { state: { id: villaId } });
   };
 
   return (
@@ -125,7 +150,7 @@ const Admin = () => {
                     <th>Name</th>
                     <th>Email</th>
                     <th>Phone</th>
-                    <th>Role</th> {/* Tambahkan kolom Role */}
+                    <th>Role</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -159,8 +184,7 @@ const Admin = () => {
                     <th>Name</th>
                     <th>Email</th>
                     <th>Phone</th>
-                    <th>Villa Name</th>{" "}
-                    {/* Kolom ini akan sulit diisi jika owner punya banyak villa */}
+                    <th>Villa Name(s)</th> {/* Changed to plural */}
                   </tr>
                 </thead>
                 <tbody>
@@ -169,10 +193,12 @@ const Admin = () => {
                       <td>{owner.name}</td>
                       <td>{owner.email}</td>
                       <td>{owner.phone}</td>
-                      {/* Untuk "Villa Name", Anda perlu fetch villa milik owner secara terpisah
-                          atau modifikasi backend untuk menyertakan daftar villa per owner.
-                          Untuk sementara, kita bisa biarkan kosong atau tampilkan pesan. */}
-                      <td>{/* Owner villa name from data, if available */}</td>
+                      <td>
+                        {allVillas
+                          .filter((villa) => villa.ownerId === owner.id)
+                          .map((villa) => villa.name)
+                          .join(", ") || "N/A"}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -208,10 +234,25 @@ const Admin = () => {
                     <tr key={villa.id}>
                       <td>{villa.name}</td>
                       <td>{villa.location}</td>
-                      <td>{villa.owner?.name || "N/A"}</td>{" "}
-                      {/* Tampilkan nama owner */}
+                      <td>{villa.owner?.name || "N/A"}</td>
                       <td>{villa.status}</td>
                       <td>
+                        <button
+                          className="btn btn-sm btn-info me-2"
+                          onClick={() => handleViewVilla(villa.id)}
+                          title="View Villa Details"
+                          style={{
+                            backgroundColor: "transparent",
+                            border: "none",
+                            color: "#555",
+                            fontSize: "18px",
+                            padding: "6px 8px",
+                            cursor: "pointer",
+                            transition: "color 0.3s ease",
+                          }}
+                        >
+                          <FaRegEye />
+                        </button>
                         <button
                           className="btn-approve"
                           onClick={() =>

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import VillaCard from "./VillaCard";
-import api from "../api/axios"; // Import instance axios
+import api from "../api/axios";
 
 const MostViewed = () => {
   const navigate = useNavigate();
@@ -13,9 +13,7 @@ const MostViewed = () => {
   useEffect(() => {
     const fetchVillas = async () => {
       try {
-        const response = await api.get("/villas"); // Mengambil data villa dari backend
-        // Anda bisa menambahkan logika untuk memilih "most viewed" di sini
-        // Untuk saat ini, kita tampilkan semua yang terverifikasi
+        const response = await api.get("/villas");
         setVillas(response.data.data);
       } catch (err) {
         console.error("Error fetching most viewed villas:", err);
@@ -56,7 +54,8 @@ const MostViewed = () => {
             location={villa.location}
             price={villa.pricePerNight}
             image={villa.mainImage}
-            onBookNow={() => navigate("/villa-detail", { state: { ...villa } })}
+            // Hapus sepenuhnya baris onBookNow={...} di sini
+            // onBookNow={() => navigate("/villa-detail", { state: { ...villa } })} <-- PASTIKAN BARIS INI TIDAK ADA
           />
         ))}
       </div>

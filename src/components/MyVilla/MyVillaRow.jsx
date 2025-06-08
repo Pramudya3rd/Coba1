@@ -8,6 +8,7 @@ const MyVillaRow = ({ villa, onDeleteSuccess }) => {
   const navigate = useNavigate();
 
   const handleDelete = async () => {
+    // Mengganti window.confirm dengan modal kustom jika diperlukan di masa depan
     if (
       window.confirm(`Apakah Anda yakin ingin menghapus villa "${villa.name}"?`)
     ) {
@@ -32,14 +33,30 @@ const MyVillaRow = ({ villa, onDeleteSuccess }) => {
       <td className="action-buttons">
         <button
           title="View"
-          onClick={() => navigate(`/view-villa`, { state: { id: villa.id } })} // Kirim ID saja
+          onClick={() => {
+            // --- DEBUG LOG: Pastikan ID villa ada sebelum navigasi ---
+            console.log(
+              "MyVillaRow: Navigating to view villa with ID:",
+              villa.id
+            );
+            // --- END DEBUG LOG ---
+            navigate(`/view-villa`, { state: { id: villa.id } }); // Kirim ID saja
+          }}
         >
           <FaRegEye />
         </button>
 
         <button
           title="Edit"
-          onClick={() => navigate(`/edit-villa`, { state: { id: villa.id } })} // Kirim ID saja
+          onClick={() => {
+            // --- DEBUG LOG: Pastikan ID villa ada sebelum navigasi ---
+            console.log(
+              "MyVillaRow: Navigating to edit villa with ID:",
+              villa.id
+            );
+            // --- END DEBUG LOG ---
+            navigate(`/edit-villa`, { state: { id: villa.id } }); // Kirim ID saja
+          }}
         >
           <FaEdit />
         </button>
